@@ -1,0 +1,94 @@
+@startuml
+title MiniERP - Technische Prüfung einer Lichtkuppel
+
+skinparam classAttributeIconSize 0
+
+' =====================================================
+' ZENTRALES DOMAIN-OBJEKT
+' =====================================================
+
+class LichtkuppelKonfiguration
+
+' =====================================================
+' SPECIFICATION PATTERN
+' =====================================================
+
+interface "Spezifikation<T>" as Spezifikation {
+    + pruefe(kandidat : T) : PruefErgebnis
+}
+
+class PruefErgebnis {
+    status : PruefStatus
+    meldung : String
+}
+
+enum PruefStatus {
+    BESTANDEN
+    WARNUNG
+    NICHT_BESTANDEN
+}
+
+class AbmessungsSpezifikation
+class DachNeigungsSpezifikation
+class FuellungsSpezifikation
+class AntriebsSpezifikation
+class ElektrikSpezifikation
+
+Spezifikation <|.. AbmessungsSpezifikation
+Spezifikation <|.. DachNeigungsSpezifikation
+Spezifikation <|.. FuellungsSpezifikation
+Spezifikation <|.. AntriebsSpezifikation
+Spezifikation <|.. ElektrikSpezifikation
+
+AbmessungsSpezifikation ..> LichtkuppelKonfiguration
+DachNeigungsSpezifikation ..> LichtkuppelKonfiguration
+FuellungsSpezifikation ..> LichtkuppelKonfiguration
+AntriebsSpezifikation ..> LichtkuppelKonfiguration
+ElektrikSpezifikation ..> LichtkuppelKonfiguration
+
+Spezifikation --> PruefErgebnis
+PruefErgebnis --> PruefStatus
+
+
+' =====================================================
+' CHAIN OF RESPONSIBILITY
+' =====================================================
+
+abstract class PruefSchritt {
+    - naechster : PruefSchritt
+    + setzeNaechsten(naechster : PruefSchritt) : PruefSchritt
+    + pruefe(konfiguration : LichtkuppelKonfiguration) : PruefErgebnis
+    # fuehrePruefungAus(konfiguration) : PruefErgebnis
+}
+
+class AbmessungsPruefSchritt
+class DachPruefSchritt
+class FuellungsPruefSchritt
+class AntriebsPruefSchritt
+class ElektrikPruefSchritt
+
+PruefSchritt <|-- AbmessungsPruefSchritt
+PruefSchritt <|-- DachPruefSchritt
+PruefSchritt <|-- FuellungsPruefSchritt
+PruefSchritt <|-- AntriebsPruefSchritt
+PruefSchritt <|-- ElektrikPruefSchritt
+
+AbmessungsPruefSchritt --> AbmessungsSpezifikation : verwendet
+DachPruefSchritt --> DachNeigungsSpezifikation : verwendet
+FuellungsPruefSchritt --> FuellungsSpezifikation : verwendet
+AntriebsPruefSchritt --> AntriebsSpezifikation : verwendet
+ElektrikPruefSchritt --> ElektrikSpezifikation : verwendet
+
+note right of Spezifikation
+Specification:
+Eine Klasse kapselt
+eine fachliche Regel.
+end note
+
+note right of PruefSchritt
+Chain of Responsibility:
+organisiert die Reihenfolge
+der Prüfungen.
+end note
+
+@enduml

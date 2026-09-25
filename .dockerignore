@@ -1,0 +1,8 @@
+target
+frontend
+.git
+.idea
+.settings
+.project
+.classpath
+*.log

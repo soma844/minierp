@@ -1,0 +1,75 @@
+@startuml
+title MiniERP - Fachliches Domainmodell
+
+class Kunde
+
+class Auftrag
+
+class AuftragsPosition
+
+class LichtkuppelKonfiguration
+
+class ProjektAnforderungen
+
+class Aufsetzkranz
+
+class FesterRahmen
+
+class OeffnungsRahmen
+
+class Fuellung
+
+class AntriebsSystem
+
+class Antrieb
+
+class ProduktionsAuftrag
+
+class KostenKalkulation
+
+class Rechnung
+
+class Zahlung
+
+
+Kunde "1" -- "0..*" Auftrag
+
+Auftrag "1" *-- "1..*" AuftragsPosition
+
+AuftragsPosition "1" --> "1" LichtkuppelKonfiguration
+
+
+LichtkuppelKonfiguration *-- ProjektAnforderungen
+
+LichtkuppelKonfiguration *-- Aufsetzkranz
+
+LichtkuppelKonfiguration *-- FesterRahmen
+
+LichtkuppelKonfiguration *-- Fuellung
+
+LichtkuppelKonfiguration *-- "0..1" OeffnungsRahmen
+
+LichtkuppelKonfiguration *-- "0..1" AntriebsSystem
+
+
+AntriebsSystem *-- "1..2" Antrieb
+
+
+Auftrag --> "0..1" ProduktionsAuftrag
+
+Auftrag --> "0..1" KostenKalkulation
+
+Auftrag --> "0..1" Rechnung
+
+Rechnung --> "0..*" Zahlung
+
+
+note right of AntriebsSystem
+FEST:
+kein Antriebssystem
+
+LUEFTUNG:
+1 oder 2 Antriebe
+end note
+
+@enduml

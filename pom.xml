@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+             http://maven.apache.org/POM/4.0.0
+             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ========================================================= -->
+    <!-- Spring Boot Parent                                        -->
+    <!-- ========================================================= -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <!-- ========================================================= -->
+    <!-- Projektinformationen                                      -->
+    <!-- ========================================================= -->
+    <groupId>de.hafni</groupId>
+    <artifactId>minierp</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>minierp</name>
+
+    <description>
+        MiniERP für Lichtkuppel-Konfiguration,
+        Produktion, Controlling und Buchhaltung
+    </description>
+
+    <!-- ========================================================= -->
+    <!-- Java-Version                                              -->
+    <!-- ========================================================= -->
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+
+    <!-- ========================================================= -->
+    <!-- Dependencies                                              -->
+    <!-- ========================================================= -->
+    <dependencies>
+
+        <!-- ===================================================== -->
+        <!-- WEB / REST                                            -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+
+        <!-- ===================================================== -->
+        <!-- JPA / Hibernate                                       -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+
+        <!-- ===================================================== -->
+        <!-- Bean Validation                                       -->
+        <!-- z.B. @NotNull, @NotBlank, @Positive                   -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+
+        <!-- ===================================================== -->
+        <!-- PostgreSQL                                            -->
+        <!-- Entwicklungs-/Produktivdatenbank                      -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <!-- ===================================================== -->
+        <!-- H2                                                    -->
+        <!-- Schnelle In-Memory-Datenbank für Tests                -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <!-- ===================================================== -->
+        <!-- Flyway                                                -->
+        <!-- Versionierte Datenbankmigrationen                     -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL-Unterstützung für Flyway -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+
+        <!-- ===================================================== -->
+        <!-- DevTools                                              -->
+        <!-- Automatischer Restart während Entwicklung             -->
+        <!-- ===================================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+
+        <!-- ===================================================== -->
+        <!-- TESTING                                               -->
+        <!-- ===================================================== -->
+
+        <!-- JPA-Test-Unterstützung, z.B. @DataJpaTest -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- WebMVC / MockMvc Test-Unterstützung -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Allgemeine Spring-Boot Tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+     <!-- ===================================================== -->
+     <!-- OpenAPI / Swagger UI                                  -->
+     <!-- REST-API automatisch dokumentieren                    -->
+     <!-- ===================================================== -->
+		<dependency>
+    		<groupId>org.springdoc</groupId>
+    		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    		<version>3.1.1</version>
+        </dependency>
+
+    </dependencies>
+    
+
+
+
+    <!-- ========================================================= -->
+    <!-- Build                                                    -->
+    <!-- ========================================================= -->
+    <build>
+
+        <plugins>
+
+            <!-- Erstellt startbare Spring-Boot-JAR -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>
