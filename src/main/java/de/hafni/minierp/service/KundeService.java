@@ -97,7 +97,7 @@ public class KundeService {
                 neueDaten.getKundenNummer())) {
 
             throw new IllegalArgumentException(
-                    "Kundennummer im Pfad und Request müssen übereinstimmen."
+                    "Die Kundennummer kann nach dem Anlegen nicht geändert werden."
             );
         }
 
