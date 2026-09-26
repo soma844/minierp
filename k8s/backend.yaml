@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: minierp
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+
+    spec:
+      imagePullSecrets:
+        - name: gitlab-registry
+
+      containers:
+        - name: backend
+
+          image: registry.gitlab.com/private-group7054739/minierp/backend:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://db:5432/minierp
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: minierp-db-secret
+                  key: POSTGRES_USER
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minierp-db-secret
+                  key: POSTGRES_PASSWORD
+
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: validate
+
+            - name: SPRING_FLYWAY_ENABLED
+              value: "true"
+
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: minierp
+
+spec:
+  selector:
+    app: backend
+
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+  type: ClusterIP
