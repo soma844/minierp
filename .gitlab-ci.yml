@@ -2,6 +2,7 @@ stages:
   - test
   - build
   - image
+  - e2e
 
 
 backend-test:
@@ -67,7 +68,6 @@ frontend-build:
 
 docker-images:
   stage: image
-
   image: docker:27-cli
 
   services:
@@ -87,6 +87,7 @@ docker-images:
   script:
     - docker build -t "$BACKEND_IMAGE" .
     - docker push "$BACKEND_IMAGE"
+
     - docker build -t "$FRONTEND_IMAGE" ./frontend
     - docker push "$FRONTEND_IMAGE"
 
@@ -98,6 +99,114 @@ docker-images:
         docker tag "$FRONTEND_IMAGE" "$CI_REGISTRY_IMAGE/frontend:latest"
         docker push "$CI_REGISTRY_IMAGE/frontend:latest"
       fi
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+
+
+playwright-e2e:
+  stage: e2e
+  image: docker:27-cli
+
+  services:
+    - name: docker:27-dind
+      alias: docker
+
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    BACKEND_IMAGE: "$CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA"
+    FRONTEND_IMAGE: "$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA"
+
+  before_script:
+    - docker info
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+
+  script:
+    # Gemeinsames Docker-Netz für DB, Backend, Frontend und Playwright
+    - docker network create minierp-e2e
+
+    # PostgreSQL
+    - >
+      docker run -d
+      --name db
+      --network minierp-e2e
+      -e POSTGRES_DB=minierp
+      -e POSTGRES_USER=minierp
+      -e POSTGRES_PASSWORD=e2e_password
+      postgres:18-alpine
+
+    # Auf PostgreSQL warten
+    - |
+      for i in $(seq 1 30); do
+        if docker exec db pg_isready -U minierp -d minierp; then
+          echo "PostgreSQL ist bereit."
+          break
+        fi
+        sleep 2
+      done
+
+    # Backend
+    - >
+      docker run -d
+      --name backend
+      --network minierp-e2e
+      -e SPRING_PROFILES_ACTIVE=dev
+      -e SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/minierp
+      -e SPRING_DATASOURCE_USERNAME=minierp
+      -e SPRING_DATASOURCE_PASSWORD=e2e_password
+      -e SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      -e SPRING_FLYWAY_ENABLED=true
+      "$BACKEND_IMAGE"
+
+    # Backend kurz hochfahren lassen
+    - |
+      for i in $(seq 1 30); do
+        if docker logs backend 2>&1 | grep -q "Started MinierpApplication"; then
+          echo "Backend ist bereit."
+          break
+        fi
+        sleep 2
+      done
+
+    # Frontend / Nginx
+    - >
+      docker run -d
+      --name frontend
+      --network minierp-e2e
+      "$FRONTEND_IMAGE"
+
+    # Temporäres Playwright-Testimage
+    - |
+      cat > frontend/Dockerfile.e2e <<'EOF'
+      FROM mcr.microsoft.com/playwright:v1.55.0-noble
+
+      WORKDIR /app
+
+      COPY package*.json ./
+      RUN npm ci
+
+      COPY . .
+
+      CMD ["npx", "playwright", "test"]
+      EOF
+
+    - docker build -f frontend/Dockerfile.e2e -t minierp-playwright ./frontend
+
+    # Browser-E2E gegen echtes Frontend
+    - >
+      docker run
+      --rm
+      --network minierp-e2e
+      -e PLAYWRIGHT_BASE_URL=http://frontend
+      minierp-playwright
+
+  after_script:
+    - docker logs backend || true
+    - docker logs frontend || true
+    - docker logs db || true
+    - docker rm -f frontend backend db || true
+    - docker network rm minierp-e2e || true
 
   rules:
     - if: '$CI_COMMIT_BRANCH'
