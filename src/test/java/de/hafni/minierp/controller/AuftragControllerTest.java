@@ -36,7 +36,7 @@ class AuftragControllerTest {
 
         String json = """
                 {
-                  "auftragsNummer": "AUF-REST-001",
+                  "auftragsNummer": "AUF-20001",
                   "kundenNummer": "K-20001",
                   "positionen": [
                     {
@@ -63,11 +63,11 @@ class AuftragControllerTest {
                 .andExpect(
                         header().string(
                                 "Location",
-                                "/api/auftraege/AUF-REST-001"))
+                                "/api/auftraege/AUF-20001"))
 
                 .andExpect(
                         jsonPath("$.auftragsNummer")
-                                .value("AUF-REST-001"))
+                                .value("AUF-20001"))
 
                 .andExpect(
                         jsonPath("$.kundenNummer")
@@ -110,14 +110,14 @@ class AuftragControllerTest {
                 "LK-20002");
 
         auftragAnlegen(
-                "AUF-REST-002",
+                "AUF-20002",
                 "K-20002",
                 "LK-20002");
 
         mockMvc.perform(
                         get(
                                 "/api/auftraege/{nummer}",
-                                "AUF-REST-002")
+                                "AUF-20002")
                 )
 
                 .andExpect(
@@ -125,7 +125,7 @@ class AuftragControllerTest {
 
                 .andExpect(
                         jsonPath("$.auftragsNummer")
-                                .value("AUF-REST-002"))
+                                .value("AUF-20002"))
 
                 .andExpect(
                         jsonPath("$.status")
@@ -151,14 +151,14 @@ class AuftragControllerTest {
                 "LK-20003");
 
         auftragAnlegen(
-                "AUF-REST-003",
+                "AUF-20003",
                 "K-20003",
                 "LK-20003");
 
         mockMvc.perform(
                         post(
                                 "/api/auftraege/{nummer}/freigeben",
-                                "AUF-REST-003")
+                                "AUF-20003")
                 )
 
                 .andExpect(
@@ -179,7 +179,7 @@ class AuftragControllerTest {
         mockMvc.perform(
                         get(
                                 "/api/auftraege/{nummer}",
-                                "AUF-REST-003")
+                                "AUF-20003")
                 )
 
                 .andExpect(
@@ -202,14 +202,14 @@ class AuftragControllerTest {
                 "LK-20004");
 
         auftragAnlegen(
-                "AUF-REST-004",
+                "AUF-20004",
                 "K-20004",
                 "LK-20004");
 
         mockMvc.perform(
                         post(
                                 "/api/auftraege/{nummer}/freigeben",
-                                "AUF-REST-004")
+                                "AUF-20004")
                 )
 
                 .andExpect(
@@ -225,7 +225,7 @@ class AuftragControllerTest {
 
         String json = """
                 {
-                  "auftragsNummer": "AUF-REST-005",
+                  "auftragsNummer": "AUF-20005",
                   "kundenNummer": "K-29999",
                   "positionen": [
                     {
@@ -264,7 +264,7 @@ class AuftragControllerTest {
 
         String json = """
                 {
-                  "auftragsNummer": "AUF-REST-006",
+                  "auftragsNummer": "AUF-20006",
                   "kundenNummer": "K-20006",
                   "positionen": [
                     {
@@ -296,7 +296,7 @@ class AuftragControllerTest {
         mockMvc.perform(
                         get(
                                 "/api/auftraege/{nummer}",
-                                "AUF-NICHT-DA")
+                                "AUF-29999")
                 )
 
                 .andExpect(

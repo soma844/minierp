@@ -49,7 +49,7 @@ class ProduktionsAuftragControllerTest {
          * 4. Auftrag anlegen
          */
         auftragAnlegen(
-                "AUF-PROD-001",
+                "AUF-30001",
                 "K-30001",
                 "LK-30001");
 
@@ -57,7 +57,7 @@ class ProduktionsAuftragControllerTest {
          * 5. Auftrag freigeben
          */
         auftragFreigeben(
-                "AUF-PROD-001");
+                "AUF-30001");
 
         /*
          * 6. Produktionsauftrag anlegen
@@ -65,7 +65,7 @@ class ProduktionsAuftragControllerTest {
         String produktionsJson = """
                 {
                   "produktionsNummer": "PROD-001",
-                  "auftragsNummer": "AUF-PROD-001",
+                  "auftragsNummer": "AUF-30001",
                   "geplanterStart": "2026-10-01"
                 }
                 """;
@@ -91,7 +91,7 @@ class ProduktionsAuftragControllerTest {
 
                 .andExpect(
                         jsonPath("$.auftragsNummer")
-                                .value("AUF-PROD-001"))
+                                .value("AUF-30001"))
 
                 .andExpect(
                         jsonPath("$.geplanterStart")
@@ -194,14 +194,14 @@ class ProduktionsAuftragControllerTest {
          * aber NICHT freigegeben.
          */
         auftragAnlegen(
-                "AUF-PROD-002",
+                "AUF-30002",
                 "K-30002",
                 "LK-30002");
 
         String json = """
                 {
                   "produktionsNummer": "PROD-002",
-                  "auftragsNummer": "AUF-PROD-002",
+                  "auftragsNummer": "AUF-30002",
                   "geplanterStart": "2026-10-02"
                 }
                 """;
@@ -231,16 +231,16 @@ class ProduktionsAuftragControllerTest {
                 "LK-30003");
 
         auftragAnlegen(
-                "AUF-PROD-003",
+                "AUF-30003",
                 "K-30003",
                 "LK-30003");
 
         auftragFreigeben(
-                "AUF-PROD-003");
+                "AUF-30003");
 
         produktionsAuftragAnlegen(
                 "PROD-003",
-                "AUF-PROD-003");
+                "AUF-30003");
 
         /*
          * Aktueller Status ist GEPLANT.

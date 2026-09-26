@@ -31,8 +31,6 @@ class LichtkuppelKonfigurationControllerTest {
         String json = """
                 {
                   "konfigurationsNummer": "LK-REST-001",
-                  "produktCode": "ECOLUX-PREMIUM-ALU",
-                  "produktBezeichnung": "ECOLUX Premium Alu",
                   "funktion": "FEST",
 
                   "projekt": {
@@ -117,7 +115,7 @@ class LichtkuppelKonfigurationControllerTest {
 
                 .andExpect(
                         jsonPath("$.produktCode")
-                                .value("ECOLUX-PREMIUM-ALU"))
+                                .value("ECOLUX-PREMIUM"))
 
                 .andExpect(
                         jsonPath("$.technischerStatus")
@@ -215,8 +213,6 @@ class LichtkuppelKonfigurationControllerTest {
         String json = """
                 {
                   "konfigurationsNummer": "%s",
-                  "produktCode": "ECOLUX-PREMIUM-ALU",
-                  "produktBezeichnung": "ECOLUX Premium Alu",
                   "funktion": "FEST",
 
                   "projekt": {

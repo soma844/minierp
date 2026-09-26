@@ -15,6 +15,19 @@ import de.hafni.minierp.domain.product.Steuerung;
 
 public final class LichtkuppelKonfigurationDtoMapper {
 
+    /*
+     * MVP:
+     * Aktuell unterstützt das MiniERP genau eine Produktfamilie.
+     *
+     * Produktcode und Produktbezeichnung sind Stammdaten
+     * und werden deshalb nicht vom Client vorgegeben.
+     */
+    private static final String PRODUKT_CODE =
+            "ECOLUX-PREMIUM";
+
+    private static final String PRODUKT_BEZEICHNUNG =
+            "ECOLUX Premium Lichtkuppel";
+
     private LichtkuppelKonfigurationDtoMapper() {
     }
 
@@ -74,9 +87,13 @@ public final class LichtkuppelKonfigurationDtoMapper {
 
                 request.konfigurationsNummer(),
 
+                /*
+                 * Produktstammdaten kommen jetzt ausschließlich
+                 * aus dem Backend.
+                 */
                 new ProduktFamilie(
-                        request.produktCode(),
-                        request.produktBezeichnung()),
+                        PRODUKT_CODE,
+                        PRODUKT_BEZEICHNUNG),
 
                 request.funktion(),
 

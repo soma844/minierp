@@ -76,10 +76,13 @@ export interface AntriebsSystemRequest {
   antriebe: AntriebRequest[]
 }
 
+/*
+ * Request zum Backend:
+ * Produktcode und Produktbezeichnung werden NICHT
+ * mehr vom Client bestimmt.
+ */
 export interface KonfigurationRequest {
   konfigurationsNummer: string
-  produktCode: string
-  produktBezeichnung: string
   funktion: LichtkuppelFunktion
 
   projekt: ProjektRequest
@@ -91,6 +94,10 @@ export interface KonfigurationRequest {
   antriebsSystem: AntriebsSystemRequest | null
 }
 
+/*
+ * Response vom Backend:
+ * Produktcode und Produktbezeichnung bleiben sichtbar.
+ */
 export interface Konfiguration {
   konfigurationsNummer: string
   produktCode: string

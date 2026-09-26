@@ -10,6 +10,7 @@ import de.hafni.minierp.domain.product.FuellungsArt;
 import de.hafni.minierp.domain.product.FuellungsAusfuehrung;
 import de.hafni.minierp.domain.product.Material;
 import de.hafni.minierp.domain.product.VersorgungsSpannung;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,12 +21,6 @@ public record KonfigurationRequest(
 
         @NotBlank
         String konfigurationsNummer,
-
-        @NotBlank
-        String produktCode,
-
-        @NotBlank
-        String produktBezeichnung,
 
         @NotNull
         LichtkuppelFunktion funktion,
@@ -86,6 +81,7 @@ public record KonfigurationRequest(
     }
 
     public record AntriebsSystemRequest(
+
             @Valid
             @NotNull
             SteuerungRequest steuerung,
