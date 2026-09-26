@@ -48,7 +48,7 @@ public class LichtkuppelKonfigurationController {
     }
 
     // ============================================================
-    // CREATE
+    // ERSTELLEN
     // ============================================================
 
     @PostMapping
@@ -101,7 +101,7 @@ public class LichtkuppelKonfigurationController {
     }
 
     // ============================================================
-    // READ ONE
+    // LESEN
     // ============================================================
 
     @GetMapping("/{nummer}")
@@ -137,7 +137,7 @@ public class LichtkuppelKonfigurationController {
     }
 
     // ============================================================
-    // READ ALL
+    // ALLE LESEN
     // ============================================================
 
     @GetMapping
@@ -221,7 +221,7 @@ public class LichtkuppelKonfigurationController {
     }
 
     // ============================================================
-    // DELETE
+    // LÖSCHEN
     // ============================================================
 
     @DeleteMapping("/{nummer}")
@@ -265,7 +265,7 @@ public class LichtkuppelKonfigurationController {
     }
 
     // ============================================================
-    // BUSINESS ACTION: PRÜFEN
+    // TECHNISCHE PRÜFUNG
     // ============================================================
 
     @PostMapping("/{nummer}/pruefen")
@@ -313,7 +313,7 @@ public class LichtkuppelKonfigurationController {
     }
 
     // ============================================================
-    // BUSINESS ACTION: FREIGEBEN
+    // FREIGEBEN
     // ============================================================
 
     @PostMapping("/{nummer}/freigeben")
