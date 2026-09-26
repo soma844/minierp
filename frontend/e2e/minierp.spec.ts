@@ -8,24 +8,24 @@ test(
   'kompletter MiniERP Prozess',
   async ({ page }) => {
 
-    /*
-     * Eindeutige Nummern, damit der Test
-     * mehrfach ausgeführt werden kann.
-     */
-    const suffix =
-      Date.now().toString()
+	/*
+	 * Gültige fachliche Nummern.
+	 *
+	 * Der GitLab-E2E-Job startet für jeden
+	 * Lauf eine frische PostgreSQL-Datenbank,
+	 * daher brauchen wir hier keine Zeitstempel.
+	 */
+	const kunde =
+	  'K-90001'
 
-    const kunde =
-      `K-E2E-${suffix}`
+	const konfiguration =
+	  'LK-90001'
 
-    const konfiguration =
-      `LK-E2E-${suffix}`
+	const auftrag =
+	  'AUF-90001'
 
-    const auftrag =
-      `AUF-E2E-${suffix}`
-
-    const produktion =
-      `PROD-E2E-${suffix}`
+	const produktion =
+	  'PROD-90001'
 
 
     // ========================================
