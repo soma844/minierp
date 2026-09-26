@@ -176,22 +176,29 @@ playwright-e2e:
       --network minierp-e2e
       "$FRONTEND_IMAGE"
 
-    # Temporäres Playwright-Testimage
-    - |
-      cat > frontend/Dockerfile.e2e <<'EOF'
-      FROM mcr.microsoft.com/playwright:v1.63.0-noble
+	  # Temporäres Playwright-Testimage
+	  - |
+	    cat > frontend/Dockerfile.e2e <<'EOF'
+	    FROM mcr.microsoft.com/playwright:v1.63.0-noble
 
-      WORKDIR /app
+	    WORKDIR /app
 
-      COPY package*.json ./
-      RUN npm ci
+	    COPY package.json package-lock.json ./
+	    RUN npm ci
 
-      COPY . .
+	    COPY . .
 
-      CMD ["npx", "playwright", "test"]
-      EOF
+	    CMD ["npx", "playwright", "test"]
+	    EOF
 
-    - docker build -f frontend/Dockerfile.e2e -t minierp-playwright ./frontend
+	  # Sicherstellen, dass wirklich das aktuelle Playwright-Basisimage verwendet wird
+	  - docker pull mcr.microsoft.com/playwright:v1.63.0-noble
+
+	  # Kein altes Docker-Layer für das E2E-Testimage verwenden
+	  - docker build --pull --no-cache -f frontend/Dockerfile.e2e -t minierp-playwright ./frontend
+
+	  # Diagnose: Paket und Browser-Image müssen dieselbe Playwright-Version haben
+	  - docker run --rm minierp-playwright npx playwright --version
 
     # Browser-E2E gegen echtes Frontend
     - >
