@@ -269,7 +269,10 @@ onMounted(() => {
           <input
             v-model="formular.kundenNummer"
             required
+            pattern="K-[0-9]{5}"
             placeholder="K-10001"
+            title="Format: K-10001 – K- gefolgt von genau 5 Ziffern."
+            autocomplete="off"
             :readonly="bearbeiten"
           >
 

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 
-
-
 import {
 
   computed,
@@ -16,11 +14,7 @@ import {
 
 } from 'vue'
 
-
-
 import { ApiError } from '../api/http'
-
-
 
 import type {
 
@@ -31,8 +25,6 @@ import type {
   KonfigurationRequest
 
 } from '../types/konfiguration'
-
-
 
 import {
 
@@ -48,44 +40,27 @@ import {
 
 } from '../services/konfigurationService'
 
-
-
-
-
 const konfigurationen =
 
   ref<Konfiguration[]>([])
 
-
-
 const laden = ref(false)
-
-
 
 const fehler =
 
   ref<string | null>(null)
 
-
-
 const meldung =
 
   ref<string | null>(null)
-
-
-
-
 
 const formular =
 
   reactive<KonfigurationRequest>({
 
-
-
     konfigurationsNummer: '',
+
     funktion: 'FEST',
-
-
 
     projekt: {
 
@@ -96,8 +71,6 @@ const formular =
       dachNeigungGrad: 10
 
     },
-
-
 
     aufsetzkranz: {
 
@@ -111,8 +84,6 @@ const formular =
 
     },
 
-
-
     festerRahmen: {
 
       material: 'ALUMINIUM',
@@ -120,8 +91,6 @@ const formular =
       thermischGetrennt: true
 
     },
-
-
 
     fuellung: {
 
@@ -139,17 +108,11 @@ const formular =
 
     },
 
-
-
     oeffnungsRahmen: null,
 
     antriebsSystem: null
 
   })
-
-
-
-
 
 const istLueftung =
 
@@ -161,21 +124,13 @@ const istLueftung =
 
   )
 
-
-
-
-
 function funktionGeaendert() {
-
-
 
   if (
 
     formular.funktion === 'LUEFTUNG'
 
   ) {
-
-
 
     formular.oeffnungsRahmen = {
 
@@ -187,11 +142,7 @@ function funktionGeaendert() {
 
     }
 
-
-
     formular.antriebsSystem = {
-
-
 
       steuerung: {
 
@@ -199,15 +150,11 @@ function funktionGeaendert() {
 
           'DC_24_V',
 
-
-
         maximalerAusgangsStromAmpere:
 
           5
 
       },
-
-
 
       antriebe: [
 
@@ -215,13 +162,9 @@ function funktionGeaendert() {
 
           art: 'KETTENANTRIEB',
 
-
-
           versorgungsSpannung:
 
             'DC_24_V',
-
-
 
           hubMm: 500,
 
@@ -235,11 +178,7 @@ function funktionGeaendert() {
 
     }
 
-
-
   } else {
-
-
 
     formular.oeffnungsRahmen = null
 
@@ -249,13 +188,7 @@ function funktionGeaendert() {
 
 }
 
-
-
-
-
 function antriebHinzufuegen() {
-
-
 
   if (!formular.antriebsSystem) {
 
@@ -263,35 +196,21 @@ function antriebHinzufuegen() {
 
   }
 
-
-
   const antrieb: AntriebRequest = {
 
-
-
     art: 'KETTENANTRIEB',
-
-
 
     versorgungsSpannung:
 
       'DC_24_V',
 
-
-
     hubMm: 500,
 
-
-
     kraftNewton: 500,
-
-
 
     nennStromAmpere: 1.2
 
   }
-
-
 
   formular.antriebsSystem
 
@@ -301,25 +220,17 @@ function antriebHinzufuegen() {
 
 }
 
-
-
-
-
 function antriebEntfernen(
 
   index: number
 
 ) {
 
-
-
   if (!formular.antriebsSystem) {
 
     return
 
   }
-
-
 
   formular.antriebsSystem
 
@@ -329,43 +240,25 @@ function antriebEntfernen(
 
 }
 
-
-
-
-
 async function ladenAlle() {
-
-
 
   laden.value = true
 
   fehler.value = null
 
-
-
   try {
-
-
 
     konfigurationen.value =
 
       await ladeKonfigurationen()
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
       ermittleFehlertext(error)
 
-
-
   } finally {
-
-
 
     laden.value = false
 
@@ -373,57 +266,31 @@ async function ladenAlle() {
 
 }
 
-
-
-
-
 async function anlegen() {
-
-
 
   fehler.value = null
 
   meldung.value = null
 
-
-
   try {
 
-
-
     const request =
+      structuredClone(toRaw(formular))
 
-  structuredClone(toRaw(formular))
-
-
-
-const gespeichert =
-
-  await legeKonfigurationAn(
-
-    request
-
-  )
-
-
+    const gespeichert =
+      await legeKonfigurationAn(
+        request
+      )
 
     meldung.value =
 
       `Konfiguration ${gespeichert.konfigurationsNummer} angelegt.`
 
-
-
     formular.konfigurationsNummer = ''
-
-
 
     await ladenAlle()
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
@@ -433,27 +300,17 @@ const gespeichert =
 
 }
 
-
-
-
-
 async function pruefen(
 
   konfiguration: Konfiguration
 
 ) {
 
-
-
   fehler.value = null
 
   meldung.value = null
 
-
-
   try {
-
-
 
     await pruefeKonfiguration(
 
@@ -463,21 +320,13 @@ async function pruefen(
 
     )
 
-
-
     meldung.value =
 
       `${konfiguration.konfigurationsNummer} wurde technisch geprüft.`
 
-
-
     await ladenAlle()
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
@@ -487,27 +336,17 @@ async function pruefen(
 
 }
 
-
-
-
-
 async function freigeben(
 
   konfiguration: Konfiguration
 
 ) {
 
-
-
   fehler.value = null
 
   meldung.value = null
 
-
-
   try {
-
-
 
     await gebeKonfigurationFrei(
 
@@ -517,21 +356,13 @@ async function freigeben(
 
     )
 
-
-
     meldung.value =
 
       `${konfiguration.konfigurationsNummer} wurde freigegeben.`
 
-
-
     await ladenAlle()
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
@@ -541,17 +372,11 @@ async function freigeben(
 
 }
 
-
-
-
-
 async function entfernen(
 
   konfiguration: Konfiguration
 
 ) {
-
-
 
   const bestaetigt =
 
@@ -561,25 +386,17 @@ async function entfernen(
 
     )
 
-
-
   if (!bestaetigt) {
 
     return
 
   }
 
-
-
   fehler.value = null
 
   meldung.value = null
 
-
-
   try {
-
-
 
     await loescheKonfiguration(
 
@@ -589,15 +406,9 @@ async function entfernen(
 
     )
 
-
-
     await ladenAlle()
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
@@ -607,51 +418,33 @@ async function entfernen(
 
 }
 
-
-
-
-
 function statusText(
 
   status: string
 
 ): string {
 
-
-
   switch (status) {
-
-
 
     case 'ENTWURF':
 
       return 'Entwurf'
 
-
-
     case 'IN_PRUEFUNG':
 
       return 'In Prüfung'
-
-
 
     case 'FREIGABEBEREIT':
 
       return 'Freigabebereit'
 
-
-
     case 'FREIGEGEBEN':
 
       return 'Freigegeben'
 
-
-
     case 'GESPERRT':
 
       return 'Gesperrt'
-
-
 
     default:
 
@@ -661,21 +454,13 @@ function statusText(
 
 }
 
-
-
-
-
 function ermittleFehlertext(
 
   error: unknown
 
 ): string {
 
-
-
   if (error instanceof ApiError) {
-
-
 
     if (
 
@@ -685,21 +470,15 @@ function ermittleFehlertext(
 
     ) {
 
-
-
       const details =
 
         error.details as Record<string, unknown>
-
-
 
       if (typeof details.detail === 'string') {
 
         return details.detail
 
       }
-
-
 
       if (typeof details.title === 'string') {
 
@@ -709,13 +488,9 @@ function ermittleFehlertext(
 
     }
 
-
-
     return `HTTP-Fehler ${error.status}`
 
   }
-
-
 
   if (error instanceof Error) {
 
@@ -723,15 +498,9 @@ function ermittleFehlertext(
 
   }
 
-
-
   return 'Unbekannter Fehler'
 
 }
-
-
-
-
 
 onMounted(() => {
 
@@ -739,33 +508,19 @@ onMounted(() => {
 
 })
 
-
-
 </script>
-
-
-
-
 
 <template>
 
-
-
   <section>
 
-
-
     <div class="page-header">
-
-
 
       <h2>
 
         Lichtkuppel-Konfigurationen
 
       </h2>
-
-
 
       <p>
 
@@ -775,13 +530,7 @@ onMounted(() => {
 
       </p>
 
-
-
     </div>
-
-
-
-
 
     <div
 
@@ -795,10 +544,6 @@ onMounted(() => {
 
     </div>
 
-
-
-
-
     <div
 
       v-if="meldung"
@@ -811,23 +556,13 @@ onMounted(() => {
 
     </div>
 
-
-
-
-
     <div class="card">
-
-
 
       <h3>
 
         Neue Konfiguration
 
       </h3>
-
-
-
-
 
       <form
 
@@ -837,19 +572,11 @@ onMounted(() => {
 
       >
 
-
-
         <div class="two-columns">
-
-
 
           <label>
 
-
-
             Konfigurationsnummer
-
-
 
             <input
 
@@ -862,26 +589,17 @@ onMounted(() => {
               "
 
               required
-
+              pattern="LK-[0-9]{5}"
               placeholder="LK-10001"
-
+              title="Format: LK-10001 – LK- gefolgt von genau 5 Ziffern."
+              autocomplete="off"
             >
-
-
 
           </label>
 
-
-
-
-
           <label>
 
-
-
             Funktion
-
-
 
             <select
 
@@ -899,15 +617,11 @@ onMounted(() => {
 
             >
 
-
-
               <option value="FEST">
 
                 Fest
 
               </option>
-
-
 
               <option value="LUEFTUNG">
 
@@ -915,47 +629,43 @@ onMounted(() => {
 
               </option>
 
-
-
             </select>
-
-
 
           </label>
 
-
-
         </div>
-
-
-
-
 
         <div class="two-columns">
 
           <label>
+
             Produktcode
 
             <input
+
               value="ECOLUX-PREMIUM"
+
               readonly
+
             >
+
           </label>
 
           <label>
+
             Produktbezeichnung
 
             <input
+
               value="ECOLUX Premium Lichtkuppel"
+
               readonly
+
             >
+
           </label>
 
         </div>
-
-
-
-
 
         <h4>
 
@@ -963,21 +673,11 @@ onMounted(() => {
 
         </h4>
 
-
-
-
-
         <div class="three-columns">
-
-
 
           <label>
 
-
-
             Breite [mm]
-
-
 
             <input
 
@@ -997,21 +697,11 @@ onMounted(() => {
 
             >
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Länge [mm]
-
-
 
             <input
 
@@ -1031,21 +721,11 @@ onMounted(() => {
 
             >
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Dachneigung [°]
-
-
 
             <input
 
@@ -1065,17 +745,9 @@ onMounted(() => {
 
             >
 
-
-
           </label>
 
-
-
         </div>
-
-
-
-
 
         <h4>
 
@@ -1083,21 +755,11 @@ onMounted(() => {
 
         </h4>
 
-
-
-
-
         <div class="four-columns">
-
-
 
           <label>
 
-
-
             Typ
-
-
 
             <select
 
@@ -1113,33 +775,19 @@ onMounted(() => {
 
             >
 
-
-
               <option value="STANDARD">
 
                 Standard
 
               </option>
 
-
-
             </select>
-
-
 
           </label>
 
-
-
-
-
           <label>
 
-
-
             Material
-
-
 
             <select
 
@@ -1155,8 +803,6 @@ onMounted(() => {
 
             >
 
-
-
               <option
 
                 value="VERZINKTER_STAHL"
@@ -1167,33 +813,19 @@ onMounted(() => {
 
               </option>
 
-
-
               <option value="ALUMINIUM">
 
                 Aluminium
 
               </option>
 
-
-
             </select>
-
-
 
           </label>
 
-
-
-
-
           <label>
 
-
-
             Höhe [mm]
-
-
 
             <input
 
@@ -1213,21 +845,11 @@ onMounted(() => {
 
             >
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Dämmstärke [mm]
-
-
 
             <input
 
@@ -1247,17 +869,9 @@ onMounted(() => {
 
             >
 
-
-
           </label>
 
-
-
         </div>
-
-
-
-
 
         <h4>
 
@@ -1265,21 +879,11 @@ onMounted(() => {
 
         </h4>
 
-
-
-
-
         <div class="two-columns">
-
-
 
           <label>
 
-
-
             Material
-
-
 
             <select
 
@@ -1295,15 +899,11 @@ onMounted(() => {
 
             >
 
-
-
               <option value="ALUMINIUM">
 
                 Aluminium
 
               </option>
-
-
 
               <option value="PVC">
 
@@ -1311,25 +911,15 @@ onMounted(() => {
 
               </option>
 
-
-
             </select>
 
-
-
           </label>
-
-
-
-
 
           <label
 
             class="checkbox-label"
 
           >
-
-
 
             <input
 
@@ -1347,21 +937,11 @@ onMounted(() => {
 
             >
 
-
-
             Thermisch getrennt
-
-
 
           </label>
 
-
-
         </div>
-
-
-
-
 
         <h4>
 
@@ -1369,105 +949,69 @@ onMounted(() => {
 
         </h4>
 
-
-
-
-
         <div class="three-columns">
 
-
-
           <label>
-
-
 
             Art
-
-
-
             <select
-
               v-model="
-
                 formular
-
                   .fuellung
-
                   .art
-
               "
-
+              required
+              title="Material der Lichtkuppelfüllung auswählen."
             >
-
-
 
               <option value="PCA">
-
-                PCA
-
+                PCA – Polycarbonat
               </option>
 
+              <option value="ALUMINIUM">
+                Aluminium
+              </option>
 
+              <option value="GLAS">
+                Glas
+              </option>
 
             </select>
 
-
-
           </label>
 
-
-
-
-
           <label>
-
-
 
             Ausführung
-
-
-
             <select
-
               v-model="
-
                 formular
-
                   .fuellung
-
                   .ausfuehrung
-
               "
-
+              required
+              title="Ausführung der Füllung auswählen."
             >
 
-
-
               <option value="OPAL">
-
                 Opal
-
               </option>
 
+              <option value="TRANSPARENT">
+                Transparent
+              </option>
 
+              <option value="WAERMEREDUKTION">
+                Wärmereduktion
+              </option>
 
             </select>
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Dicke [mm]
-
-
 
             <input
 
@@ -1485,21 +1029,11 @@ onMounted(() => {
 
             >
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Ug-Wert
-
-
 
             <input
 
@@ -1519,21 +1053,11 @@ onMounted(() => {
 
             >
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Lichttransmission [%]
-
-
 
             <input
 
@@ -1551,21 +1075,11 @@ onMounted(() => {
 
             >
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Solarfaktor [%]
-
-
 
             <input
 
@@ -1583,17 +1097,9 @@ onMounted(() => {
 
             >
 
-
-
           </label>
 
-
-
         </div>
-
-
-
-
 
         <!-- ========================== -->
 
@@ -1601,25 +1107,15 @@ onMounted(() => {
 
         <!-- ========================== -->
 
-
-
         <template v-if="istLueftung">
 
-
-
           <div class="technical-section">
-
-
 
             <h3>
 
               Öffnungsrahmen
 
             </h3>
-
-
-
-
 
             <div
 
@@ -1635,15 +1131,9 @@ onMounted(() => {
 
             >
 
-
-
               <label>
 
-
-
                 Material
-
-
 
                 <select
 
@@ -1659,8 +1149,6 @@ onMounted(() => {
 
                 >
 
-
-
                   <option
 
                     value="ALUMINIUM"
@@ -1671,33 +1159,19 @@ onMounted(() => {
 
                   </option>
 
-
-
                   <option value="PVC">
 
                     PVC
 
                   </option>
 
-
-
                 </select>
-
-
 
               </label>
 
-
-
-
-
               <label>
 
-
-
                 Gewicht [kg]
-
-
 
                 <input
 
@@ -1719,21 +1193,13 @@ onMounted(() => {
 
                 >
 
-
-
               </label>
-
-
-
-
 
               <label
 
                 class="checkbox-label"
 
               >
-
-
 
                 <input
 
@@ -1751,39 +1217,21 @@ onMounted(() => {
 
                 >
 
-
-
                 Thermisch getrennt
-
-
 
               </label>
 
-
-
             </div>
-
-
 
           </div>
 
-
-
-
-
           <div class="technical-section">
-
-
 
             <h3>
 
               Steuerung
 
             </h3>
-
-
-
-
 
             <div
 
@@ -1799,15 +1247,9 @@ onMounted(() => {
 
             >
 
-
-
               <label>
 
-
-
                 Versorgungsspannung
-
-
 
                 <select
 
@@ -1825,8 +1267,6 @@ onMounted(() => {
 
                 >
 
-
-
                   <option
 
                     value="DC_24_V"
@@ -1836,8 +1276,6 @@ onMounted(() => {
                     24 V DC
 
                   </option>
-
-
 
                   <option
 
@@ -1849,25 +1287,13 @@ onMounted(() => {
 
                   </option>
 
-
-
                 </select>
-
-
 
               </label>
 
-
-
-
-
               <label>
 
-
-
                 Max. Ausgangsstrom [A]
-
-
 
                 <input
 
@@ -1891,21 +1317,11 @@ onMounted(() => {
 
                 >
 
-
-
               </label>
-
-
 
             </div>
 
-
-
           </div>
-
-
-
-
 
           <div
 
@@ -1921,21 +1337,13 @@ onMounted(() => {
 
           >
 
-
-
             <div class="table-header">
-
-
 
               <h3>
 
                 Antriebe
 
               </h3>
-
-
-
-
 
               <button
 
@@ -1953,13 +1361,7 @@ onMounted(() => {
 
               </button>
 
-
-
             </div>
-
-
-
-
 
             <div
 
@@ -1987,19 +1389,11 @@ onMounted(() => {
 
             >
 
-
-
               <div class="four-columns">
-
-
 
                 <label>
 
-
-
                   Antriebsart
-
-
 
                   <select
 
@@ -2011,8 +1405,6 @@ onMounted(() => {
 
                   >
 
-
-
                     <option
 
                       value="KETTENANTRIEB"
@@ -2022,8 +1414,6 @@ onMounted(() => {
                       Kettenantrieb
 
                     </option>
-
-
 
                     <option
 
@@ -2035,25 +1425,13 @@ onMounted(() => {
 
                     </option>
 
-
-
                   </select>
-
-
 
                 </label>
 
-
-
-
-
                 <label>
 
-
-
                   Spannung
-
-
 
                   <select
 
@@ -2067,8 +1445,6 @@ onMounted(() => {
 
                   >
 
-
-
                     <option
 
                       value="DC_24_V"
@@ -2078,8 +1454,6 @@ onMounted(() => {
                       24 V DC
 
                     </option>
-
-
 
                     <option
 
@@ -2091,25 +1465,13 @@ onMounted(() => {
 
                     </option>
 
-
-
                   </select>
-
-
 
                 </label>
 
-
-
-
-
                 <label>
 
-
-
                   Hub [mm]
-
-
 
                   <input
 
@@ -2125,21 +1487,11 @@ onMounted(() => {
 
                   >
 
-
-
                 </label>
-
-
-
-
 
                 <label>
 
-
-
                   Kraft [N]
-
-
 
                   <input
 
@@ -2157,21 +1509,11 @@ onMounted(() => {
 
                   >
 
-
-
                 </label>
-
-
-
-
 
                 <label>
 
-
-
                   Nennstrom [A]
-
-
 
                   <input
 
@@ -2191,17 +1533,9 @@ onMounted(() => {
 
                   >
 
-
-
                 </label>
 
-
-
               </div>
-
-
-
-
 
               <button
 
@@ -2237,25 +1571,13 @@ onMounted(() => {
 
               </button>
 
-
-
             </div>
-
-
 
           </div>
 
-
-
         </template>
 
-
-
-
-
         <div class="form-actions">
-
-
 
           <button
 
@@ -2269,21 +1591,11 @@ onMounted(() => {
 
           </button>
 
-
-
         </div>
-
-
 
       </form>
 
-
-
     </div>
-
-
-
-
 
     <!-- ========================== -->
 
@@ -2291,23 +1603,15 @@ onMounted(() => {
 
     <!-- ========================== -->
 
-
-
     <div class="card">
 
-
-
       <div class="table-header">
-
-
 
         <h3>
 
           Vorhandene Konfigurationen
 
         </h3>
-
-
 
         <button
 
@@ -2321,23 +1625,13 @@ onMounted(() => {
 
         </button>
 
-
-
       </div>
-
-
-
-
 
       <p v-if="laden">
 
         Konfigurationen werden geladen ...
 
       </p>
-
-
-
-
 
       <table
 
@@ -2349,11 +1643,7 @@ onMounted(() => {
 
       >
 
-
-
         <thead>
-
-
 
           <tr>
 
@@ -2369,17 +1659,9 @@ onMounted(() => {
 
           </tr>
 
-
-
         </thead>
 
-
-
-
-
         <tbody>
-
-
 
           <tr
 
@@ -2401,8 +1683,6 @@ onMounted(() => {
 
           >
 
-
-
             <td>
 
               {{
@@ -2414,10 +1694,6 @@ onMounted(() => {
               }}
 
             </td>
-
-
-
-
 
             <td>
 
@@ -2431,10 +1707,6 @@ onMounted(() => {
 
             </td>
 
-
-
-
-
             <td>
 
               {{
@@ -2447,13 +1719,7 @@ onMounted(() => {
 
             </td>
 
-
-
-
-
             <td>
-
-
 
               <span
 
@@ -2467,8 +1733,6 @@ onMounted(() => {
 
               >
 
-
-
                 {{
 
                   statusText(
@@ -2481,21 +1745,11 @@ onMounted(() => {
 
                 }}
 
-
-
               </span>
-
-
 
             </td>
 
-
-
-
-
             <td class="actions">
-
-
 
               <button
 
@@ -2526,10 +1780,6 @@ onMounted(() => {
                 Prüfen
 
               </button>
-
-
-
-
 
               <button
 
@@ -2565,10 +1815,6 @@ onMounted(() => {
 
               </button>
 
-
-
-
-
               <button
 
                 v-if="
@@ -2603,25 +1849,13 @@ onMounted(() => {
 
               </button>
 
-
-
             </td>
-
-
 
           </tr>
 
-
-
         </tbody>
 
-
-
       </table>
-
-
-
-
 
       <p v-else>
 
@@ -2629,14 +1863,8 @@ onMounted(() => {
 
       </p>
 
-
-
     </div>
 
-
-
   </section>
-
-
 
 </template>

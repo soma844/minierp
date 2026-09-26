@@ -1,7 +1,5 @@
 <script setup lang="ts">
 
-
-
 import {
 
   computed,
@@ -14,17 +12,11 @@ import {
 
 } from 'vue'
 
-
-
 import { ApiError } from '../api/http'
-
-
 
 import type { Kunde } from '../types/kunde'
 
 import type { Konfiguration } from '../types/konfiguration'
-
-
 
 import type {
 
@@ -36,23 +28,17 @@ import type {
 
 } from '../types/auftrag'
 
-
-
 import {
 
   ladeKunden
 
 } from '../services/kundeService'
 
-
-
 import {
 
   ladeKonfigurationen
 
 } from '../services/konfigurationService'
-
-
 
 import {
 
@@ -64,57 +50,33 @@ import {
 
 } from '../services/auftragService'
 
-
-
-
-
 const kunden = ref<Kunde[]>([])
-
-
 
 const konfigurationen =
 
   ref<Konfiguration[]>([])
 
-
-
 const auftraege =
 
   ref<Auftrag[]>([])
 
-
-
 const laden = ref(false)
-
-
 
 const fehler =
 
   ref<string | null>(null)
 
-
-
 const meldung =
 
   ref<string | null>(null)
-
-
-
-
 
 const formular =
 
   reactive<AuftragRequest>({
 
-
-
     auftragsNummer: '',
 
-
-
     kundenNummer: '',
-
-
 
     positionen: [
 
@@ -136,10 +98,6 @@ const formular =
 
   })
 
-
-
-
-
 const freigegebeneKonfigurationen =
 
   computed(() =>
@@ -156,13 +114,7 @@ const freigegebeneKonfigurationen =
 
   )
 
-
-
-
-
 function positionHinzufuegen() {
-
-
 
   const letzte =
 
@@ -172,8 +124,6 @@ function positionHinzufuegen() {
 
     ]
 
-
-
   const neueNummer =
 
     letzte
@@ -182,13 +132,9 @@ function positionHinzufuegen() {
 
       : 10
 
-
-
   const position:
 
     AuftragsPositionRequest = {
-
-
 
       positionsNummer: neueNummer,
 
@@ -202,8 +148,6 @@ function positionHinzufuegen() {
 
     }
 
-
-
   formular.positionen.push(
 
     position
@@ -212,17 +156,11 @@ function positionHinzufuegen() {
 
 }
 
-
-
-
-
 function positionEntfernen(
 
   index: number
 
 ) {
-
-
 
   if (
 
@@ -234,8 +172,6 @@ function positionEntfernen(
 
   }
 
-
-
   formular.positionen.splice(
 
     index,
@@ -246,23 +182,13 @@ function positionEntfernen(
 
 }
 
-
-
-
-
 async function stammdatenLaden() {
-
-
 
   laden.value = true
 
   fehler.value = null
 
-
-
   try {
-
-
 
     const [
 
@@ -274,53 +200,33 @@ async function stammdatenLaden() {
 
     ] = await Promise.all([
 
-
-
       ladeKunden(),
 
-
-
       ladeKonfigurationen(),
-
-
 
       ladeAuftraege()
 
     ])
 
-
-
     kunden.value =
 
       geladeneKunden
-
-
 
     konfigurationen.value =
 
       geladeneKonfigurationen
 
-
-
     auftraege.value =
 
       geladeneAuftraege
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
       ermittleFehlertext(error)
 
-
-
   } finally {
-
-
 
     laden.value = false
 
@@ -328,39 +234,23 @@ async function stammdatenLaden() {
 
 }
 
-
-
-
-
 async function anlegen() {
-
-
 
   fehler.value = null
 
   meldung.value = null
 
-
-
   try {
 
-
-
     const request: AuftragRequest = {
-
-
 
       auftragsNummer:
 
         formular.auftragsNummer,
 
-
-
       kundenNummer:
 
         formular.kundenNummer,
-
-
 
       positionen:
 
@@ -372,25 +262,17 @@ async function anlegen() {
 
               position.positionsNummer,
 
-
-
             menge:
 
               position.menge,
-
-
 
             einzelPreisHt:
 
               position.einzelPreisHt,
 
-
-
             rabattProzent:
 
               position.rabattProzent,
-
-
 
             konfigurationsNummer:
 
@@ -402,8 +284,6 @@ async function anlegen() {
 
     }
 
-
-
     const gespeichert =
 
       await legeAuftragAn(
@@ -412,19 +292,13 @@ async function anlegen() {
 
       )
 
-
-
     meldung.value =
 
       `Auftrag ${gespeichert.auftragsNummer} wurde angelegt.`
 
-
-
     formular.auftragsNummer = ''
 
     formular.kundenNummer = ''
-
-
 
     formular.positionen.splice(
 
@@ -448,15 +322,9 @@ async function anlegen() {
 
     )
 
-
-
     await stammdatenLaden()
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
@@ -465,8 +333,6 @@ async function anlegen() {
   }
 
 }
-
-
 
 async function freigeben(
 
@@ -474,17 +340,11 @@ async function freigeben(
 
 ) {
 
-
-
   fehler.value = null
 
   meldung.value = null
 
-
-
   try {
-
-
 
     await gebeAuftragFrei(
 
@@ -492,21 +352,13 @@ async function freigeben(
 
     )
 
-
-
     meldung.value =
 
       `Auftrag ${auftrag.auftragsNummer} wurde freigegeben.`
 
-
-
     await stammdatenLaden()
 
-
-
   } catch (error) {
-
-
 
     fehler.value =
 
@@ -516,17 +368,11 @@ async function freigeben(
 
 }
 
-
-
-
-
 function formatiereGeld(
 
   wert: number
 
 ): string {
-
-
 
   return new Intl.NumberFormat(
 
@@ -544,21 +390,13 @@ function formatiereGeld(
 
 }
 
-
-
-
-
 function ermittleFehlertext(
 
   error: unknown
 
 ): string {
 
-
-
   if (error instanceof ApiError) {
-
-
 
     if (
 
@@ -568,13 +406,9 @@ function ermittleFehlertext(
 
     ) {
 
-
-
       const details =
 
         error.details as Record<string, unknown>
-
-
 
       if (
 
@@ -587,8 +421,6 @@ function ermittleFehlertext(
         return details.detail
 
       }
-
-
 
       if (
 
@@ -604,13 +436,9 @@ function ermittleFehlertext(
 
     }
 
-
-
     return `HTTP-Fehler ${error.status}`
 
   }
-
-
 
   if (error instanceof Error) {
 
@@ -618,15 +446,9 @@ function ermittleFehlertext(
 
   }
 
-
-
   return 'Unbekannter Fehler'
 
 }
-
-
-
-
 
 onMounted(() => {
 
@@ -634,33 +456,19 @@ onMounted(() => {
 
 })
 
-
-
 </script>
-
-
-
-
 
 <template>
 
-
-
   <section>
 
-
-
     <div class="page-header">
-
-
 
       <h2>
 
         Aufträge
 
       </h2>
-
-
 
       <p>
 
@@ -670,13 +478,7 @@ onMounted(() => {
 
       </p>
 
-
-
     </div>
-
-
-
-
 
     <div
 
@@ -690,10 +492,6 @@ onMounted(() => {
 
     </div>
 
-
-
-
-
     <div
 
       v-if="meldung"
@@ -706,23 +504,13 @@ onMounted(() => {
 
     </div>
 
-
-
-
-
     <div class="card">
-
-
 
       <h3>
 
         Neuen Auftrag anlegen
 
       </h3>
-
-
-
-
 
       <form
 
@@ -732,19 +520,11 @@ onMounted(() => {
 
       >
 
-
-
         <div class="two-columns">
-
-
 
           <label>
 
-
-
             Auftragsnummer
-
-
 
             <input
 
@@ -756,26 +536,21 @@ onMounted(() => {
 
               required
 
-            pattern="AUF-[0-9]{5}"
-              placeholder="AUF-10001"
+  pattern="AUF-[0-9]{5}"
+
+  placeholder="AUF-10001"
+
+  title="Format: AUF-10001 – AUF- gefolgt von genau 5 Ziffern."
+
+  autocomplete="off"
 
             >
 
-
-
           </label>
-
-
-
-
 
           <label>
 
-
-
             Kunde
-
-
 
             <select
 
@@ -789,15 +564,11 @@ onMounted(() => {
 
             >
 
-
-
               <option value="">
 
                 Bitte auswählen
 
               </option>
-
-
 
               <option
 
@@ -825,37 +596,21 @@ onMounted(() => {
 
               </option>
 
-
-
             </select>
-
-
 
           </label>
 
-
-
         </div>
-
-
-
-
 
         <div class="technical-section">
 
-
-
           <div class="table-header">
-
-
 
             <h3>
 
               Positionen
 
             </h3>
-
-
 
             <button
 
@@ -873,13 +628,7 @@ onMounted(() => {
 
             </button>
 
-
-
           </div>
-
-
-
-
 
           <div
 
@@ -897,19 +646,11 @@ onMounted(() => {
 
           >
 
-
-
             <div class="five-columns">
-
-
 
               <label>
 
-
-
                 Position
-
-
 
                 <input
 
@@ -930,21 +671,11 @@ onMounted(() => {
 
                 >
 
-
-
               </label>
-
-
-
-
 
               <label>
 
-
-
                 Konfiguration
-
-
 
                 <select
 
@@ -960,15 +691,11 @@ onMounted(() => {
 
                 >
 
-
-
                   <option value="">
 
                     Bitte auswählen
 
                   </option>
-
-
 
                   <option
 
@@ -1018,25 +745,13 @@ onMounted(() => {
 
                   </option>
 
-
-
                 </select>
-
-
 
               </label>
 
-
-
-
-
               <label>
 
-
-
                 Menge
-
-
 
                 <input
 
@@ -1049,27 +764,17 @@ onMounted(() => {
                   type="number"
 
                   min="1"
-
                 step="1"
+
                   required
 
                 >
 
-
-
               </label>
-
-
-
-
 
               <label>
 
-
-
                 Einzelpreis HT
-
-
 
                 <input
 
@@ -1091,21 +796,11 @@ onMounted(() => {
 
                 >
 
-
-
               </label>
-
-
-
-
 
               <label>
 
-
-
                 Rabatt [%]
-
-
 
                 <input
 
@@ -1129,17 +824,9 @@ onMounted(() => {
 
                 >
 
-
-
               </label>
 
-
-
             </div>
-
-
-
-
 
             <button
 
@@ -1173,21 +860,11 @@ onMounted(() => {
 
             </button>
 
-
-
           </div>
-
-
 
         </div>
 
-
-
-
-
         <div class="form-actions">
-
-
 
           <button
 
@@ -1201,37 +878,21 @@ onMounted(() => {
 
           </button>
 
-
-
         </div>
-
-
 
       </form>
 
-
-
     </div>
-
-
-
-
 
     <div class="card">
 
-
-
       <div class="table-header">
-
-
 
         <h3>
 
           Vorhandene Aufträge
 
         </h3>
-
-
 
         <button
 
@@ -1249,23 +910,13 @@ onMounted(() => {
 
         </button>
 
-
-
       </div>
-
-
-
-
 
       <p v-if="laden">
 
         Aufträge werden geladen ...
 
       </p>
-
-
-
-
 
       <table
 
@@ -1277,11 +928,7 @@ onMounted(() => {
 
       >
 
-
-
         <thead>
-
-
 
           <tr>
 
@@ -1299,17 +946,9 @@ onMounted(() => {
 
           </tr>
 
-
-
         </thead>
 
-
-
-
-
         <tbody>
-
-
 
           <tr
 
@@ -1329,8 +968,6 @@ onMounted(() => {
 
           >
 
-
-
             <td>
 
               {{
@@ -1343,13 +980,7 @@ onMounted(() => {
 
             </td>
 
-
-
-
-
             <td>
-
-
 
               {{
 
@@ -1359,11 +990,7 @@ onMounted(() => {
 
               }}
 
-
-
               <br>
-
-
 
               <small>
 
@@ -1377,17 +1004,9 @@ onMounted(() => {
 
               </small>
 
-
-
             </td>
 
-
-
-
-
             <td>
-
-
 
               {{
 
@@ -1399,17 +1018,9 @@ onMounted(() => {
 
               }}
 
-
-
             </td>
 
-
-
-
-
             <td>
-
-
 
               {{
 
@@ -1421,17 +1032,9 @@ onMounted(() => {
 
               }}
 
-
-
             </td>
 
-
-
-
-
             <td>
-
-
 
               <span
 
@@ -1447,17 +1050,9 @@ onMounted(() => {
 
               </span>
 
-
-
             </td>
 
-
-
-
-
             <td>
-
-
 
               <button
 
@@ -1489,25 +1084,13 @@ onMounted(() => {
 
               </button>
 
-
-
             </td>
-
-
 
           </tr>
 
-
-
         </tbody>
 
-
-
       </table>
-
-
-
-
 
       <p v-else>
 
@@ -1515,14 +1098,8 @@ onMounted(() => {
 
       </p>
 
-
-
     </div>
 
-
-
   </section>
-
-
 
 </template>
