@@ -28,23 +28,23 @@ class AuftragControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-AUF-001",
+                "K-20001",
                 "Musterbau GmbH");
 
         konfigurationAnlegen(
-                "LK-AUF-001");
+                "LK-20001");
 
         String json = """
                 {
                   "auftragsNummer": "AUF-REST-001",
-                  "kundenNummer": "K-AUF-001",
+                  "kundenNummer": "K-20001",
                   "positionen": [
                     {
                       "positionsNummer": 10,
                       "menge": 3,
                       "einzelPreisHt": 2300.00,
                       "rabattProzent": 10.00,
-                      "konfigurationsNummer": "LK-AUF-001"
+                      "konfigurationsNummer": "LK-20001"
                     }
                   ]
                 }
@@ -71,7 +71,7 @@ class AuftragControllerTest {
 
                 .andExpect(
                         jsonPath("$.kundenNummer")
-                                .value("K-AUF-001"))
+                                .value("K-20001"))
 
                 .andExpect(
                         jsonPath("$.status")
@@ -103,16 +103,16 @@ class AuftragControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-AUF-002",
+                "K-20002",
                 "Firma Zwei GmbH");
 
         konfigurationAnlegen(
-                "LK-AUF-002");
+                "LK-20002");
 
         auftragAnlegen(
                 "AUF-REST-002",
-                "K-AUF-002",
-                "LK-AUF-002");
+                "K-20002",
+                "LK-20002");
 
         mockMvc.perform(
                         get(
@@ -133,7 +133,7 @@ class AuftragControllerTest {
 
                 .andExpect(
                         jsonPath("$.positionen[0].konfigurationsNummer")
-                                .value("LK-AUF-002"));
+                                .value("LK-20002"));
     }
 
     @Test
@@ -141,19 +141,19 @@ class AuftragControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-AUF-003",
+                "K-20003",
                 "Firma Drei GmbH");
 
         konfigurationAnlegen(
-                "LK-AUF-003");
+                "LK-20003");
 
         konfigurationPruefenUndFreigeben(
-                "LK-AUF-003");
+                "LK-20003");
 
         auftragAnlegen(
                 "AUF-REST-003",
-                "K-AUF-003",
-                "LK-AUF-003");
+                "K-20003",
+                "LK-20003");
 
         mockMvc.perform(
                         post(
@@ -173,7 +173,7 @@ class AuftragControllerTest {
          *
          * Wir lesen danach erneut aus der DB.
          *
-         * Damit prüfen wir auch unsere
+         * Damit prÃ¼fen wir auch unsere
          * Auftrag.rehydrieren()-Logik.
          */
         mockMvc.perform(
@@ -195,16 +195,16 @@ class AuftragControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-AUF-004",
+                "K-20004",
                 "Firma Vier GmbH");
 
         konfigurationAnlegen(
-                "LK-AUF-004");
+                "LK-20004");
 
         auftragAnlegen(
                 "AUF-REST-004",
-                "K-AUF-004",
-                "LK-AUF-004");
+                "K-20004",
+                "LK-20004");
 
         mockMvc.perform(
                         post(
@@ -226,7 +226,7 @@ class AuftragControllerTest {
         String json = """
                 {
                   "auftragsNummer": "AUF-REST-005",
-                  "kundenNummer": "K-NICHT-DA",
+                  "kundenNummer": "K-29999",
                   "positionen": [
                     {
                       "positionsNummer": 10,
@@ -259,20 +259,20 @@ class AuftragControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-AUF-006",
+                "K-20006",
                 "Firma Sechs GmbH");
 
         String json = """
                 {
                   "auftragsNummer": "AUF-REST-006",
-                  "kundenNummer": "K-AUF-006",
+                  "kundenNummer": "K-20006",
                   "positionen": [
                     {
                       "positionsNummer": 10,
                       "menge": 1,
                       "einzelPreisHt": 1000.00,
                       "rabattProzent": 0.00,
-                      "konfigurationsNummer": "LK-NICHT-DA"
+                      "konfigurationsNummer": "LK-29999"
                     }
                   ]
                 }

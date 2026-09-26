@@ -30,28 +30,28 @@ class ProduktionsAuftragControllerTest {
          * 1. Kunde
          */
         kundeAnlegen(
-                "K-PROD-001",
+                "K-30001",
                 "Produktionskunde GmbH");
 
         /*
          * 2. Technische Konfiguration
          */
         konfigurationAnlegen(
-                "LK-PROD-001");
+                "LK-30001");
 
         /*
-         * 3. Technisch prüfen + freigeben
+         * 3. Technisch prÃ¼fen + freigeben
          */
         konfigurationPruefenUndFreigeben(
-                "LK-PROD-001");
+                "LK-30001");
 
         /*
          * 4. Auftrag anlegen
          */
         auftragAnlegen(
                 "AUF-PROD-001",
-                "K-PROD-001",
-                "LK-PROD-001");
+                "K-30001",
+                "LK-30001");
 
         /*
          * 5. Auftrag freigeben
@@ -136,7 +136,7 @@ class ProduktionsAuftragControllerTest {
                                 .value("PRODUZIERT"));
 
         /*
-         * 9. Produktionsauftrag abschließen
+         * 9. Produktionsauftrag abschlieÃŸen
          *
          * PRODUZIERT -> ABGESCHLOSSEN
          */
@@ -156,7 +156,7 @@ class ProduktionsAuftragControllerTest {
          * 10. Erneut aus der Datenbank laden.
          *
          * Sehr wichtig:
-         * Dadurch prüfen wir die Rehydration.
+         * Dadurch prÃ¼fen wir die Rehydration.
          */
         mockMvc.perform(
                         get(
@@ -180,14 +180,14 @@ class ProduktionsAuftragControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-PROD-002",
+                "K-30002",
                 "Kunde Zwei GmbH");
 
         konfigurationAnlegen(
-                "LK-PROD-002");
+                "LK-30002");
 
         konfigurationPruefenUndFreigeben(
-                "LK-PROD-002");
+                "LK-30002");
 
         /*
          * Auftrag wird angelegt,
@@ -195,8 +195,8 @@ class ProduktionsAuftragControllerTest {
          */
         auftragAnlegen(
                 "AUF-PROD-002",
-                "K-PROD-002",
-                "LK-PROD-002");
+                "K-30002",
+                "LK-30002");
 
         String json = """
                 {
@@ -221,19 +221,19 @@ class ProduktionsAuftragControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-PROD-003",
+                "K-30003",
                 "Kunde Drei GmbH");
 
         konfigurationAnlegen(
-                "LK-PROD-003");
+                "LK-30003");
 
         konfigurationPruefenUndFreigeben(
-                "LK-PROD-003");
+                "LK-30003");
 
         auftragAnlegen(
                 "AUF-PROD-003",
-                "K-PROD-003",
-                "LK-PROD-003");
+                "K-30003",
+                "LK-30003");
 
         auftragFreigeben(
                 "AUF-PROD-003");

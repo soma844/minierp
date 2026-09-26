@@ -32,7 +32,7 @@ class KundeControllerTest {
 
         String json = """
                 {
-                  "kundenNummer": "K-REST-001",
+                  "kundenNummer": "K-10001",
                   "firmenName": "Musterbau GmbH"
                 }
                 """;
@@ -50,11 +50,11 @@ class KundeControllerTest {
                 .andExpect(
                         header().string(
                                 "Location",
-                                "/api/kunden/K-REST-001"))
+                                "/api/kunden/K-10001"))
 
                 .andExpect(
                         jsonPath("$.kundenNummer")
-                                .value("K-REST-001"))
+                                .value("K-10001"))
 
                 .andExpect(
                         jsonPath("$.firmenName")
@@ -66,14 +66,14 @@ class KundeControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-REST-002",
+                "K-10002",
                 "Testkunde GmbH"
         );
 
         mockMvc.perform(
                         get(
                                 "/api/kunden/{kundenNummer}",
-                                "K-REST-002")
+                                "K-10002")
                 )
 
                 .andExpect(
@@ -81,7 +81,7 @@ class KundeControllerTest {
 
                 .andExpect(
                         jsonPath("$.kundenNummer")
-                                .value("K-REST-002"))
+                                .value("K-10002"))
 
                 .andExpect(
                         jsonPath("$.firmenName")
@@ -93,12 +93,12 @@ class KundeControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-REST-003",
+                "K-10003",
                 "Firma Drei GmbH"
         );
 
         kundeAnlegen(
-                "K-REST-004",
+                "K-10004",
                 "Firma Vier GmbH"
         );
 
@@ -123,13 +123,13 @@ class KundeControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-REST-005",
+                "K-10005",
                 "Alter Firmenname GmbH"
         );
 
         String json = """
                 {
-                  "kundenNummer": "K-REST-005",
+                  "kundenNummer": "K-10005",
                   "firmenName": "Neuer Firmenname GmbH"
                 }
                 """;
@@ -137,7 +137,7 @@ class KundeControllerTest {
         mockMvc.perform(
                         put(
                                 "/api/kunden/{kundenNummer}",
-                                "K-REST-005")
+                                "K-10005")
                                 .contentType(
                                         MediaType.APPLICATION_JSON)
                                 .content(json)
@@ -145,6 +145,10 @@ class KundeControllerTest {
 
                 .andExpect(
                         status().isOk())
+
+                .andExpect(
+                        jsonPath("$.kundenNummer")
+                                .value("K-10005"))
 
                 .andExpect(
                         jsonPath("$.firmenName")
@@ -157,14 +161,14 @@ class KundeControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-REST-006",
+                "K-10006",
                 "Loeschbare Firma GmbH"
         );
 
         mockMvc.perform(
                         delete(
                                 "/api/kunden/{kundenNummer}",
-                                "K-REST-006")
+                                "K-10006")
                 )
 
                 .andExpect(
@@ -173,7 +177,7 @@ class KundeControllerTest {
         mockMvc.perform(
                         get(
                                 "/api/kunden/{kundenNummer}",
-                                "K-REST-006")
+                                "K-10006")
                 )
 
                 .andExpect(
@@ -181,13 +185,41 @@ class KundeControllerTest {
     }
 
     @Test
+    void kundeMitUngueltigerKundennummerWirdAbgelehnt()
+            throws Exception {
+
+        String json = """
+                {
+                  "kundenNummer": "K TEST",
+                  "firmenName": "Test GmbH"
+                }
+                """;
+
+        mockMvc.perform(
+                        post("/api/kunden")
+                                .contentType(
+                                        MediaType.APPLICATION_JSON)
+                                .content(json)
+                )
+                .andExpect(
+                        status().isBadRequest());
+    }
+
+    @Test
     void unbekannterKundeSoll404Liefern()
             throws Exception {
 
+        /*
+         * Für GET existiert aktuell keine Bean-Validation
+         * auf dem PathVariable.
+         *
+         * Trotzdem verwenden wir auch hier ein
+         * formal gültiges Format.
+         */
         mockMvc.perform(
                         get(
                                 "/api/kunden/{kundenNummer}",
-                                "K-NICHT-DA")
+                                "K-99999")
                 )
 
                 .andExpect(
@@ -209,7 +241,7 @@ class KundeControllerTest {
 
         String json = """
                 {
-                  "kundenNummer": "K-REST-007",
+                  "kundenNummer": "K-10007",
                   "firmenName": ""
                 }
                 """;
@@ -230,13 +262,13 @@ class KundeControllerTest {
             throws Exception {
 
         kundeAnlegen(
-                "K-REST-008",
+                "K-10008",
                 "Erste Firma GmbH"
         );
 
         String json = """
                 {
-                  "kundenNummer": "K-REST-008",
+                  "kundenNummer": "K-10008",
                   "firmenName": "Andere Firma GmbH"
                 }
                 """;
