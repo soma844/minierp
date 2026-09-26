@@ -42,4 +42,4 @@ frontend/test-results/
 frontend/playwright-report/
 
 ### Logs ###
-*.log
+*.log*.tar
