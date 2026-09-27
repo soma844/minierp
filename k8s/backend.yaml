@@ -1,5 +1,8 @@
+# Spring-Boot-Backend als Kubernetes Deployment
+
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: backend
   namespace: minierp
@@ -17,12 +20,12 @@ spec:
         app: backend
 
     spec:
+      # Zugang zur privaten GitLab Container Registry
       imagePullSecrets:
         - name: gitlab-registry
 
       containers:
         - name: backend
-
           image: registry.gitlab.com/private-group7054739/minierp/backend:latest
           imagePullPolicy: Always
 
@@ -36,6 +39,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://db:5432/minierp
 
+            # DB-Zugangsdaten aus Kubernetes Secret
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -54,12 +58,14 @@ spec:
             - name: SPRING_FLYWAY_ENABLED
               value: "true"
 
+          # Pod ist bereit für Requests
           readinessProbe:
             tcpSocket:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 5
 
+          # Prüft, ob die Anwendung noch läuft
           livenessProbe:
             tcpSocket:
               port: 8080
@@ -68,8 +74,12 @@ spec:
 
 
 ---
+
+# Interner Service für das Backend
+
 apiVersion: v1
 kind: Service
+
 metadata:
   name: backend
   namespace: minierp
