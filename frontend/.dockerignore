@@ -1,6 +1,12 @@
+# nicht ins Docker-Build-Kontext schicken
 node_modules
+# lokaler Build wird nicht mitgenommen
 dist
+# Playwright-Testresultate nicht ins Image
 test-results
+# HTML-Testreport nicht ins Image
 playwright-report
+# Git-Historie braucht Docker nicht
 .git
+# lokale Konfiguration bzw. Secrets nicht versehentlich ins Image.
 *.log
