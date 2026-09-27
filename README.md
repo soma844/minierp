@@ -12,7 +12,7 @@ https://minierp-frontend-82yt.onrender.com
 **REST API / Swagger:**  
 https://minierp-50kg.onrender.com/swagger-ui/index.html
 
-> Hinweis: Die Demo läuft auf einem kostenlosen Cloud-Tarif.
+> Hinweis: Die Demo läuft auf Render(Cloud-Hosting-Plattform).
 > Nach längerer Inaktivität kann der erste Backend-Aufruf etwas länger dauern.
 
 ## Technologie-Stack
