@@ -66,37 +66,37 @@ in PostgreSQL.
 
 
 
-&#x20;   Rest Controller
+Rest Controller
 
-&#x20;   DTO\[Request / Response DTO]
+DTO\[Request / Response DTO]
 
-&#x20;   Mapper\[DTO Mapper]
+Mapper\[DTO Mapper]
 
-&#x20;   Service\[Application Service]
+Service\[Application Service]
 
-&#x20;   Domain\[Domain Model]
+Domain\[Domain Model]
 
-&#x20;   Repository\[Repository]
+Repository\[Repository]
 
-&#x20;   Entity\[JPA Entity]
+Entity\[JPA Entity]
 
-&#x20;   Database\[(PostgreSQL)]
+Database\[(PostgreSQL)]
 
 
 
-&#x20;   Controller --> DTO
+Controller --> DTO
 
-&#x20;   DTO --> Mapper
+DTO --> Mapper
 
-&#x20;   Mapper --> Service
+Mapper --> Service
 
-&#x20;   Service --> Domain
+Service --> Domain
 
-&#x20;   Service --> Repository
+Service --> Repository
 
-&#x20;   Repository --> Entity
+Repository --> Entity
 
-&#x20;   Entity --> Database
+Entity --> Database
 
 
 
@@ -120,13 +120,13 @@ Beispiele:
 
 
 
-\- `KundeController`
+KundeController
 
-\- `LichtkuppelKonfigurationController`
+LichtkuppelKonfigurationController
 
-\- `AuftragController`
+AuftragController
 
-\- `ProduktionsAuftragController`
+ProduktionsAuftragController
 
 
 
@@ -154,35 +154,17 @@ Ihre Hauptaufgaben sind:
 
 REST-Daten werden nicht direkt als Domainobjekte veröffentlicht.
 
-
-
 Dafür existieren Request- und Response-DTOs.
-
-
-
-
 
 Dadurch bleibt die externe REST-Schnittstelle von der internen
 
 Domainmodellierung getrennt.
 
-
-
-
-
 \## 5. Application Services
-
-
 
 Services koordinieren fachliche Use Cases.
 
-
-
 Beispiele:
-
-
-
-
 
 Kunde anlegen
 
@@ -212,19 +194,19 @@ Ein Service orchestriert Domainobjekte und Repositories.
 
 ENTWURF
 
-&#x20;   |
+   |
 
-&#x20;   | technische Prüfung erfolgreich
+   | technische Prüfung erfolgreich
 
-&#x20;   v
+   v
 
 FREIGABEBEREIT
 
-&#x20;   |
+   |
 
-&#x20;   | Freigabe
+   | Freigabe
 
-&#x20;   v
+   v
 
 FREIGEGEBEN
 
@@ -248,11 +230,11 @@ Ein Beispiel ist der technische Status einer Konfiguration:
 
 FREIGABEBEREIT
 
-&#x20;   |
+   |
 
-&#x20;   | Freigabe
+   | Freigabe
 
-&#x20;   v
+   v
 
 FREIGEGEBEN
 
@@ -280,21 +262,21 @@ Der Produktionsstatus folgt dem Ablauf:
 
 GEPLANT
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
-IN\_PRODUKTION
+IN PRODUKTION
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 PRODUZIERT
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 ABGESCHLOSSEN
 
@@ -314,27 +296,27 @@ Die Persistenzschicht verwendet Spring Data JPA und Hibernate.
 
 Domain Model
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 Persistence Mapper
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 JPA Entity
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 Spring Data Repository
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 PostgreSQL
 
@@ -430,21 +412,21 @@ Der Zugriff auf das Backend erfolgt über eine zentrale HTTP-Abstraktion.
 
 Vue View
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 API Client
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 HTTP / REST
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 Spring Boot
 
@@ -502,17 +484,17 @@ Für Backend und Frontend werden Multi-Stage-Docker-Builds eingesetzt.
 
 Maven + JDK
 
-&#x20;   |
+   |
 
-&#x20;   | mvn package
+   | mvn package
 
-&#x20;   v
+   v
 
 Spring Boot JAR
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 JRE Runtime Image
 
@@ -528,17 +510,17 @@ Die Build-Werkzeugen müssen dadurch nicht im Runtime-Container enthalten sein.
 
 Node.js
 
-&#x20;   |
+   |
 
-&#x20;   | npm build
+   | npm build
 
-&#x20;   v
+   v
 
 HTML / CSS / JavaScript
 
-&#x20;   |
+   |
 
-&#x20;   v
+   v
 
 Nginx Runtime Image
 
@@ -562,19 +544,19 @@ Docker Compose verbindet lokal drei Services:
 
 
 
-&#x20;   Browser --> Frontend
+   Browser --> Frontend
 
-&#x20;   Frontend --> Backend
+   Frontend --> Backend
 
-&#x20;   Backend --> DB
+   Backend --> DB
 
 
 
-&#x20;   Frontend\[frontend Vue + Nginx]
+   Frontend\[frontend Vue + Nginx]
 
-&#x20;   Backend\[backend Spring Boot]
+   Backend\[backend Spring Boot]
 
-&#x20;   DB\[(db PostgreSQL)]
+   DB\[(db PostgreSQL)]
 
 
 
@@ -624,29 +606,29 @@ Für Kubernetes werden folgende Ressourcen eingesetzt:
 
 
 
-&#x20;   User\[Browser]
+   User\[Browser]
 
-&#x20;   kubectl port-forward
-
-
-
-&#x20;   frontend Service
-
-&#x20;   Vue / Nginx Pod
+   kubectl port-forward
 
 
 
-&#x20;   backend Service
+   frontend Service
 
-&#x20;   Spring Boot Pod
+   Vue / Nginx Pod
 
 
 
-&#x20;   db Service
+   backend Service
 
-&#x20;   PostgreSQL Pod
+   Spring Boot Pod
 
-&#x20;   Persistent Volume Claim
+
+
+   db Service
+
+   PostgreSQL Pod
+
+   Persistent Volume Claim
 
 
 
@@ -773,36 +755,35 @@ e2e
 Der Ablauf ist:
 
 
+   A\[Git Push]
 
-&#x20;   A\[Git Push]
+   B\[Backend Tests]
 
-&#x20;   B\[Backend Tests]
+   C\[Frontend Tests]
 
-&#x20;   C\[Frontend Tests]
+   D\[Frontend Build]
 
-&#x20;   D\[Frontend Build]
+   E\[Docker Build]
 
-&#x20;   E\[Docker Build]
+   F\[GitLab Registry]
 
-&#x20;   F\[GitLab Registry]
-
-&#x20;   G\[Playwright E2E]
-
+   G\[Playwright E2E]
 
 
-&#x20;   A --> B
 
-&#x20;   A --> C
+   A --> B
 
-&#x20;   C --> D
+   A --> C
 
-&#x20;   B --> E
+   C --> D
 
-&#x20;   D --> E
+   B --> E
 
-&#x20;   E --> F
+   D --> E
 
-&#x20;   F --> G
+   E --> F
+
+   F --> G
 
 
 
@@ -822,27 +803,27 @@ Die Anwendung wird auf mehreren Ebenen getestet.
 
 Domain / Unit Tests
 
-&#x20;       |
+       |
 
-&#x20;       v
+       v
 
 Service Tests
 
-&#x20;       |
+       |
 
-&#x20;       v
+       v
 
 Controller Tests
 
-&#x20;       |
+       |
 
-&#x20;       v
+       v
 
 Vue Component Tests
 
-&#x20;       |
+       |
 
-&#x20;       v
+       v
 
 Playwright End-to-End
 
