@@ -41,7 +41,7 @@ FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Nur das fertige Frontend aus der Build-Stage übernehmen.
-# Node.js und der Quellcode werden im Runtime-Image nicht benötigt.
+# Node.js und der Quellcode werden im Runtime-Image nicht gebraucht.
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Nginx stellt das Frontend über HTTP bereit
