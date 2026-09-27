@@ -4,32 +4,48 @@ import {
 } from '@playwright/test'
 
 
+/**
+ * End-to-End-Test des vollständigen MiniERP-Hauptprozesses.
+ *
+ * Der Test bildet einen realistischen Geschäftsablauf ab:
+ *
+ * Kunde anlegen
+ *   -> technische Konfiguration erstellen und freigeben
+ *   -> Auftrag erfassen und freigeben
+ *   -> Produktionsauftrag erzeugen
+ *   -> Produktion durchführen und abschließen
+ *
+ * Damit wird nicht nur die Benutzeroberfläche getestet,
+ * sondern auch das Zusammenspiel der wichtigsten
+ * fachlichen Prozesse zwischen Frontend und Backend.
+ */
 test(
   'kompletter MiniERP Prozess',
   async ({ page }) => {
 
-	/*
-	 * Gültige fachliche Nummern.
-	 *
-	 * Der GitLab-E2E-Job startet für jeden
-	 * Lauf eine frische PostgreSQL-Datenbank,
-	 * daher brauchen wir hier keine Zeitstempel.
-	 */
-	const kunde =
-	  'K-90001'
+    /*
+     * Feste fachliche Testnummern.
+     *
+     * Der GitLab-E2E-Job startet für jeden Testlauf
+     * mit einer frischen PostgreSQL-Datenbank.
+     * Deshalb sind keine Zeitstempel oder zufälligen
+     * Nummern zur Vermeidung von Duplikaten notwendig.
+     */
+    const kunde =
+      'K-90001'
 
-	const konfiguration =
-	  'LK-90001'
+    const konfiguration =
+      'LK-90001'
 
-	const auftrag =
-	  'AUF-90001'
+    const auftrag =
+      'AUF-90001'
 
-	const produktion =
-	  'PROD-90001'
+    const produktion =
+      'PROD-90001'
 
 
     // ========================================
-    // 1. KUNDE
+    // 1. KUNDE ANLEGEN
     // ========================================
 
     await page.goto('/kunden')
@@ -52,6 +68,10 @@ test(
       .click()
 
 
+    /*
+     * Kundenzeile anhand der eindeutigen
+     * Kundennummer ermitteln.
+     */
     const kundenZeile =
       page
         .getByRole('row')
@@ -59,6 +79,11 @@ test(
           hasText: kunde
         })
 
+
+    /*
+     * Verifizieren, dass der Kunde nach dem
+     * Speichern in der Übersicht erscheint.
+     */
     await expect(
       kundenZeile
     ).toContainText(
@@ -67,7 +92,7 @@ test(
 
 
     // ========================================
-    // 2. KONFIGURATION
+    // 2. KONFIGURATION ERSTELLEN
     // ========================================
 
     await page.goto(
@@ -82,9 +107,12 @@ test(
         konfiguration
       )
 
+
     /*
-     * Alle übrigen FEST-Werte haben
-     * bereits sinnvolle Defaultwerte.
+     * Die übrigen technischen Eigenschaften
+     * besitzen bereits gültige Defaultwerte.
+     * Dadurch konzentriert sich dieser E2E-Test
+     * auf den eigentlichen Workflow.
      */
     await page
       .getByRole(
@@ -106,6 +134,10 @@ test(
         })
 
 
+    /*
+     * Neue Konfigurationen beginnen
+     * im Status "Entwurf".
+     */
     await expect(
       konfigurationsZeile
     ).toContainText(
@@ -113,7 +145,7 @@ test(
     )
 
 
-    // technische Prüfung
+    // Technische Prüfung der Konfiguration
 
     await konfigurationsZeile
       .getByRole(
@@ -125,6 +157,10 @@ test(
       .click()
 
 
+    /*
+     * Eine technisch gültige Konfiguration
+     * muss anschließend freigabebereit sein.
+     */
     await expect(
       konfigurationsZeile
     ).toContainText(
@@ -132,7 +168,7 @@ test(
     )
 
 
-    // technische Freigabe
+    // Technische Freigabe
 
     await konfigurationsZeile
       .getByRole(
@@ -152,7 +188,7 @@ test(
 
 
     // ========================================
-    // 3. AUFTRAG
+    // 3. AUFTRAG ANLEGEN
     // ========================================
 
     await page.goto('/auftraege')
@@ -167,6 +203,11 @@ test(
       )
 
 
+    /*
+     * Auftrag mit dem zuvor angelegten Kunden
+     * und der freigegebenen Konfiguration
+     * verknüpfen.
+     */
     await page
       .getByLabel('Kunde')
       .selectOption(
@@ -221,6 +262,10 @@ test(
         })
 
 
+    /*
+     * Neu angelegte Aufträge befinden sich
+     * zunächst im Status ENTWURF.
+     */
     await expect(
       auftragsZeile
     ).toContainText(
@@ -229,11 +274,15 @@ test(
 
 
     /*
-     * Prüft gleichzeitig unsere
-     * Backend-Berechnung:
+     * Gleichzeitig wird die Preisberechnung
+     * des Backends überprüft:
      *
-     * 3 x 2300 = 6900
-     * -10 %     = 6210
+     * 3 x 2.300,00 € = 6.900,00 €
+     * - 10 % Rabatt = 6.210,00 €
+     *
+     * Damit deckt der E2E-Test neben dem
+     * UI-Workflow auch eine zentrale
+     * fachliche Berechnungsregel ab.
      */
     await expect(
       auftragsZeile
@@ -241,6 +290,8 @@ test(
       /6\.210,00/
     )
 
+
+    // Auftrag für die Produktion freigeben
 
     await auftragsZeile
       .getByRole(
@@ -260,7 +311,7 @@ test(
 
 
     // ========================================
-    // 4. PRODUKTION
+    // 4. PRODUKTIONSAUFTRAG ANLEGEN
     // ========================================
 
     await page.goto(
@@ -277,6 +328,11 @@ test(
       )
 
 
+    /*
+     * Für die Produktion darf nur ein
+     * zuvor freigegebener Auftrag
+     * ausgewählt werden.
+     */
     await page
       .getByLabel(
         'Freigegebener Auftrag'
@@ -315,6 +371,10 @@ test(
         })
 
 
+    /*
+     * Ein neu angelegter Produktionsauftrag
+     * beginnt im Status "Geplant".
+     */
     await expect(
       produktionsZeile
     ).toContainText(
@@ -323,6 +383,7 @@ test(
 
 
     // ========================================
+    // 5. PRODUKTIONS-WORKFLOW
     // GEPLANT -> IN_PRODUKTION
     // ========================================
 
@@ -381,6 +442,11 @@ test(
       .click()
 
 
+    /*
+     * Nach Abschluss müssen sowohl der
+     * Prozessstatus als auch die fachliche
+     * Fertigmeldung korrekt dargestellt werden.
+     */
     await expect(
       produktionsZeile
     ).toContainText(
