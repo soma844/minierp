@@ -1,8 +1,16 @@
+# Maven build output
 target
+
+# Frontend is built separately
 frontend
+
+# Git metadata
 .git
-.idea
+
+# Eclipse project metadata
 .settings
 .project
 .classpath
+
+# Local logs
 *.log
