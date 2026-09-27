@@ -1,5 +1,9 @@
+# MiniERP lokale Docker-Umgebung:
+# PostgreSQL + Spring Boot Backend + Vue/Nginx Frontend
+
 services:
 
+  # PostgreSQL-Datenbank
   db:
     image: postgres:18-alpine
 
@@ -20,6 +24,7 @@ services:
       retries: 10
 
 
+  # Spring-Boot-Backend
   backend:
     build:
       context: .
@@ -41,6 +46,7 @@ services:
       - "8080:8080"
 
 
+  # Vue-Frontend über Nginx
   frontend:
     build:
       context: ./frontend
@@ -53,5 +59,6 @@ services:
       - "8081:80"
 
 
+# Persistenter Speicher für PostgreSQL
 volumes:
   postgres_data:
