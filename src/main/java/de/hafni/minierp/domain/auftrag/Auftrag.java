@@ -10,6 +10,10 @@ import de.hafni.minierp.exception.DomainValidationException;
 import de.hafni.minierp.exception.FehlerCode;
 import de.hafni.minierp.exception.GeschaeftsregelException;
 
+
+/**
+ * Fachliches Auftragsmodell mit Positions- und Freigaberegeln.
+ */
 public class Auftrag {
 
     private final String auftragsNummer;
@@ -20,6 +24,8 @@ public class Auftrag {
 
     private AuftragsStatus status;
 
+
+    // Neuen Auftrag im Status ENTWURF erzeugen
     public Auftrag(
             String auftragsNummer,
             Kunde kunde) {
@@ -42,6 +48,9 @@ public class Auftrag {
         this.kunde = kunde;
         this.status = AuftragsStatus.ENTWURF;
     }
+
+
+    // Bestehenden Auftrag mit gespeichertem Status rekonstruieren
     private Auftrag(
             String auftragsNummer,
             Kunde kunde,
@@ -58,6 +67,8 @@ public class Auftrag {
         this.status = status;
     }
 
+
+    // Persistierten Auftrag wieder als Domain-Objekt herstellen
     public static Auftrag rehydrieren(
             String auftragsNummer,
             Kunde kunde,
@@ -80,6 +91,8 @@ public class Auftrag {
         return auftrag;
     }
 
+
+    // Auftragsposition hinzufügen
     public void fuegePositionHinzu(
             AuftragsPosition position) {
 
@@ -91,6 +104,8 @@ public class Auftrag {
         positionen.add(position);
     }
 
+
+    // Gesamtbetrag aller Positionen berechnen
     public BigDecimal berechneGesamtHt() {
 
         return positionen.stream()
@@ -100,6 +115,8 @@ public class Auftrag {
                         BigDecimal::add);
     }
 
+
+    // Auftrag nach Prüfung der Geschäftsregeln freigeben
     public void freigeben() {
 
         if (positionen.isEmpty()) {
@@ -123,6 +140,7 @@ public class Auftrag {
 
         status = AuftragsStatus.FREIGEGEBEN;
     }
+
 
     public String getAuftragsNummer() {
         return auftragsNummer;
