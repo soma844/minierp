@@ -1,21 +1,34 @@
+# ==========================================================
+# PostgreSQL-Datenbank für MiniERP
+# Persistent Storage + Deployment + interner Service
+# ==========================================================
+
+
+# Dauerhafter Speicher für PostgreSQL
 apiVersion: v1
 kind: PersistentVolumeClaim
+
 metadata:
   name: postgres-data
   namespace: minierp
 
 spec:
+  # Speicher darf von einem Node schreibend eingebunden werden
   accessModes:
     - ReadWriteOnce
 
+  # Angeforderte Speicherkapazität
   resources:
     requests:
       storage: 1Gi
 
 
 ---
+
+# PostgreSQL Deployment
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: db
   namespace: minierp
@@ -36,11 +49,13 @@ spec:
       containers:
         - name: postgres
 
+          # PostgreSQL-Container
           image: postgres:18-alpine
 
           ports:
             - containerPort: 5432
 
+          # Datenbankname und Zugangsdaten aus Kubernetes Secret
           env:
             - name: POSTGRES_DB
               valueFrom:
@@ -60,10 +75,12 @@ spec:
                   name: minierp-db-secret
                   key: POSTGRES_PASSWORD
 
+          # Dauerhaften Speicher in PostgreSQL einbinden
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql
 
+          # Prüft, ob PostgreSQL Anfragen annehmen kann
           readinessProbe:
             exec:
               command:
@@ -74,6 +91,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
 
+          # Prüft, ob PostgreSQL noch funktionsfähig ist
           livenessProbe:
             exec:
               command:
@@ -84,16 +102,19 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
 
+      # Verknüpft den Pod mit dem PersistentVolumeClaim
       volumes:
         - name: postgres-storage
-
           persistentVolumeClaim:
             claimName: postgres-data
 
 
 ---
+
+# Interner Netzwerk-Service für PostgreSQL
 apiVersion: v1
 kind: Service
+
 metadata:
   name: db
   namespace: minierp
