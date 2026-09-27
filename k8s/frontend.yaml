@@ -1,60 +1,121 @@
+# ==========================================================
+# MiniERP Frontend
+# Kubernetes Deployment + interner Service
+# ==========================================================
+
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
+  # Name des Deployments
   name: frontend
+
+  # Ressource gehört zum MiniERP-Namespace
   namespace: minierp
 
+
 spec:
+  # Eine Frontend-Instanz soll laufen
   replicas: 1
 
+  # Das Deployment verwaltet Pods mit diesem Label
   selector:
     matchLabels:
       app: frontend
 
+
+  # Vorlage für die Frontend-Pods
   template:
+
     metadata:
+      # Jeder erzeugte Pod erhält dieses Label
       labels:
         app: frontend
 
     spec:
+
+      # Zugang zur privaten GitLab Container Registry
       imagePullSecrets:
         - name: gitlab-registry
 
+
       containers:
+
         - name: frontend
+
+          # Docker-Image des MiniERP-Frontends
           image: registry.gitlab.com/private-group7054739/minierp/frontend:latest
+
+          # Image nur laden, wenn es auf dem Kubernetes-Node
+          # noch nicht vorhanden ist
           imagePullPolicy: IfNotPresent
 
+
+          # Nginx läuft im Container auf Port 80
           ports:
             - containerPort: 80
 
+
+          # Prüft, ob das Frontend bereit ist,
+          # HTTP-Anfragen entgegenzunehmen
           readinessProbe:
+
             httpGet:
+              # Kubernetes ruft die Startseite auf
               path: /
               port: 80
+
+            # Erste Prüfung 3 Sekunden nach Containerstart
             initialDelaySeconds: 3
+
+            # Danach alle 5 Sekunden prüfen
             periodSeconds: 5
 
+
+          # Prüft regelmäßig, ob das Frontend noch funktioniert
           livenessProbe:
+
             httpGet:
               path: /
               port: 80
+
+            # Erste Prüfung nach 10 Sekunden
             initialDelaySeconds: 10
+
+            # Danach alle 10 Sekunden prüfen
             periodSeconds: 10
 
+
 ---
+
+# ==========================================================
+# Interner Netzwerk-Service für das Frontend
+# ==========================================================
+
 apiVersion: v1
 kind: Service
+
 metadata:
   name: frontend
   namespace: minierp
 
+
 spec:
+
+  # Der Service leitet Requests an Pods
+  # mit diesem Label weiter
   selector:
     app: frontend
 
+
   ports:
+
+    # Service ist im Cluster auf Port 80 erreichbar
     - port: 80
+
+      # Weiterleitung an Port 80 des Frontend-Containers
       targetPort: 80
 
+
+  # Nur innerhalb des Kubernetes-Clusters erreichbar
   type: ClusterIP
