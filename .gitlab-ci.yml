@@ -1,9 +1,16 @@
+# MiniERP CI/CD Pipeline:
+# Tests -> Build -> Docker Images -> E2E-Test
+
 stages:
   - test
   - build
   - image
   - e2e
 
+
+# ----------------------------------------------------------
+# Backend Unit-/Integrationstests
+# ----------------------------------------------------------
 
 backend-test:
   stage: test
@@ -23,6 +30,10 @@ backend-test:
     - mvn --batch-mode test
 
 
+# ----------------------------------------------------------
+# Frontend Tests
+# ----------------------------------------------------------
+
 frontend-test:
   stage: test
   image: node:22-alpine
@@ -41,6 +52,10 @@ frontend-test:
   script:
     - npm run test:run
 
+
+# ----------------------------------------------------------
+# Frontend Produktionsbuild
+# ----------------------------------------------------------
 
 frontend-build:
   stage: build
@@ -66,6 +81,10 @@ frontend-build:
     expire_in: 1 week
 
 
+# ----------------------------------------------------------
+# Backend- und Frontend-Docker-Images
+# ----------------------------------------------------------
+
 docker-images:
   stage: image
   image: docker:27-cli
@@ -85,15 +104,14 @@ docker-images:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
 
   script:
-    # Backend-Image bauen und pushen
+    # Commit-spezifische Images bauen und veröffentlichen
     - docker build --pull -t "$BACKEND_IMAGE" .
     - docker push "$BACKEND_IMAGE"
 
-    # Frontend-Image bauen und pushen
     - docker build --pull -t "$FRONTEND_IMAGE" ./frontend
     - docker push "$FRONTEND_IMAGE"
 
-    # Auf dem Default-Branch zusätzlich latest veröffentlichen
+    # Default-Branch zusätzlich als latest markieren
     - |
       if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]; then
         docker tag "$BACKEND_IMAGE" "$CI_REGISTRY_IMAGE/backend:latest"
@@ -106,6 +124,11 @@ docker-images:
   rules:
     - if: '$CI_COMMIT_BRANCH'
 
+
+# ----------------------------------------------------------
+# Vollständiger E2E-Test mit PostgreSQL, Backend,
+# Frontend und Playwright
+# ----------------------------------------------------------
 
 playwright-e2e:
   stage: e2e
@@ -130,9 +153,7 @@ playwright-e2e:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
 
   script:
-    # ---------------------------------------------------------
-    # Diagnose des tatsächlich ausgecheckten Commits
-    # ---------------------------------------------------------
+    # Commit-Diagnose
     - echo "CI_COMMIT_SHA=$CI_COMMIT_SHA"
     - echo "CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA"
 
@@ -142,14 +163,10 @@ playwright-e2e:
         "K-90001|K-E2E|LK-90001|LK-E2E|AUF-90001|AUF-E2E|PROD-90001|PROD-E2E" \
         frontend/e2e/minierp.spec.ts
 
-    # ---------------------------------------------------------
-    # Gemeinsames Docker-Netz
-    # ---------------------------------------------------------
+    # Gemeinsames Netzwerk für den Test-Stack
     - docker network create minierp-e2e
 
-    # ---------------------------------------------------------
-    # PostgreSQL
-    # ---------------------------------------------------------
+    # PostgreSQL starten
     - >
       docker run -d
       --name db
@@ -180,9 +197,7 @@ playwright-e2e:
         exit 1
       fi
 
-    # ---------------------------------------------------------
-    # Backend
-    # ---------------------------------------------------------
+    # Backend starten
     - >
       docker run -d
       --name backend
@@ -195,7 +210,7 @@ playwright-e2e:
       -e SPRING_FLYWAY_ENABLED=true
       "$BACKEND_IMAGE"
 
-    # Auf Backend warten
+    # Auf Spring Boot warten
     - |
       BACKEND_READY=false
 
@@ -222,9 +237,7 @@ playwright-e2e:
         exit 1
       fi
 
-    # ---------------------------------------------------------
-    # Frontend / Nginx
-    # ---------------------------------------------------------
+    # Frontend/Nginx starten
     - >
       docker run -d
       --name frontend
@@ -259,9 +272,7 @@ playwright-e2e:
         exit 1
       fi
 
-    # ---------------------------------------------------------
-    # Temporäres Playwright-Testimage
-    # ---------------------------------------------------------
+    # Temporäres Playwright-Testimage erstellen
     - |
       cat > frontend/Dockerfile.e2e <<'EOF'
       FROM mcr.microsoft.com/playwright:v1.63.0-noble
@@ -276,10 +287,8 @@ playwright-e2e:
       CMD ["npx", "playwright", "test"]
       EOF
 
-    # Playwright-Basisimage ausdrücklich aktualisieren
     - docker pull mcr.microsoft.com/playwright:v1.63.0-noble
 
-    # Commit-spezifisches Testimage ohne alten Build-Cache bauen
     - >
       docker build
       --pull
@@ -288,9 +297,7 @@ playwright-e2e:
       -t "$PLAYWRIGHT_IMAGE"
       ./frontend
 
-    # ---------------------------------------------------------
-    # Diagnose des tatsächlich gebauten Playwright-Containers
-    # ---------------------------------------------------------
+    # Diagnose des Testcontainers
     - docker run --rm "$PLAYWRIGHT_IMAGE" npx playwright --version
 
     - |
@@ -298,9 +305,7 @@ playwright-e2e:
       docker run --rm "$PLAYWRIGHT_IMAGE" sh -lc \
         'grep -nE "K-90001|K-E2E|LK-90001|LK-E2E|AUF-90001|AUF-E2E|PROD-90001|PROD-E2E" /app/e2e/minierp.spec.ts'
 
-    # ---------------------------------------------------------
-    # Browser-E2E gegen den echten Docker-Stack
-    # ---------------------------------------------------------
+    # E2E-Test gegen den vollständigen Stack
     - >
       docker run
       --rm
@@ -308,6 +313,7 @@ playwright-e2e:
       -e PLAYWRIGHT_BASE_URL=http://frontend
       "$PLAYWRIGHT_IMAGE"
 
+  # Testumgebung immer aufräumen
   after_script:
     - docker logs backend || true
     - docker logs frontend || true
