@@ -27,6 +27,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 
+
+/**
+ * REST-Controller für Kundenstammdaten.
+ */
 @RestController
 @RequestMapping("/api/kunden")
 @Tag(
@@ -43,10 +47,8 @@ public class KundeController {
         this.service = service;
     }
 
-    // ============================================================
-    // ERSTELLEN
-    // ============================================================
 
+    // Kunde anlegen
     @PostMapping
     @Operation(
             summary = "Kunde anlegen",
@@ -86,10 +88,8 @@ public class KundeController {
                 .body(response);
     }
 
-    // ============================================================
-    // LESEN
-    // ============================================================
 
+    // Einzelnen Kunden laden
     @GetMapping("/{kundenNummer}")
     @Operation(
             summary = "Kunde laden"
@@ -116,10 +116,8 @@ public class KundeController {
         );
     }
 
-    // ============================================================
-    // ALLE KUNDEN LESEN
-    // ============================================================
 
+    // Alle Kunden laden
     @GetMapping
     @Operation(
             summary = "Alle Kunden laden"
@@ -133,10 +131,8 @@ public class KundeController {
                 .toList();
     }
 
-    // ============================================================
-    // UPDATE
-    // ============================================================
 
+    // Kundenstammdaten aktualisieren
     @PutMapping("/{kundenNummer}")
     @Operation(
             summary = "Kunde aktualisieren",
@@ -175,10 +171,8 @@ public class KundeController {
         );
     }
 
-    // ============================================================
-    // LÖSCHEN
-    // ============================================================
 
+    // Kunden löschen
     @DeleteMapping("/{kundenNummer}")
     @Operation(
             summary = "Kunde löschen",
